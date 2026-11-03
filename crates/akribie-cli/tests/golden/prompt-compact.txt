@@ -1,0 +1,54 @@
+akribie — `.akrc` → accessible SVG, raster, scene JSON, Excalidraw
+
+Write topology, not coordinates: declare nodes and edges; `akr` computes geometry.
+One statement per line, UTF-8 without BOM. Blank lines are free. `#` starts a comment.
+
+chart v1 "Title" [layout=flow|tree|mindmap|grid|stack|free] [direction=lr|tb|bt|rl]
+               [theme=paper|slate] [fontsize=20] [pad=32] [lang=en] [sketch=on|off]
+               [font=hand|sans] [doc="path#anchor"]
+group ID ["Label"] [fill=…] [stroke=…] [pad=24] [in=ID,ID]
+node ID ["Label"] [shape=rect|rounded|circle|diamond|cloud|cylinder|hexagon|note|text]
+                 [fill=none|paper|blue|green|amber|red|violet]
+                 [fillstyle=hachure|solid|cross-hatch|zigzag]
+                 [stroke=ink|muted|none|paper|blue|green|amber|red|violet]
+                 [style=solid|dashed|dotted] [width=2] [in=ID,ID] [at=x,y] [size=w,h]
+edge FROM -> TO ["Label"] [curve=line|arc|elbow] [head=arrow|none] [tail=arrow|none] [style=…]
+note "Text" [fill=…] [at=x,y] [size=w,h] [near=ID]
+
+Layouts: flow = pipeline (direction), tree = hierarchy, mindmap = topics, grid = catalog,
+         stack = one column, free = declared positions (every node/note needs `at=x,y`).
+
+Finish: `sketch=on` (default) is hand-drawn; `sketch=off` is technical (exact lines, real arcs).
+Font: `font=hand` (default) is Excalifont; `font=sans` is Liberation Sans. Labels never touch a
+line, a border or another block: edge labels interrupt their own line with a 6 px gap.
+
+Example 1 — retry with backoff:
+
+chart v1 "Retry" layout=flow direction=lr
+node api "API" fill=blue
+node retry "Retry x3" fill=amber shape=cloud
+node dlq "DLQ" fill=red shape=cylinder
+edge api -> retry "5xx"
+edge retry -> api "backoff" curve=arc style=dashed
+edge retry -> dlq "exhausted" style=dashed
+
+Example 2 — grouped pipeline:
+
+chart v1 "Pipeline" layout=flow direction=lr
+group ingest "Ingest" fill=paper
+node src "Source" in=ingest
+node queue "Queue" in=ingest shape=cylinder
+node worker "Worker"
+edge src -> queue
+edge queue -> worker "job"
+
+Fixing errors: `akr check` exits 8 and prints `file:line:col: E0xx name: message` plus a `hint:`.
+Rewrite only the reported line and resend. Never rewrite the whole document, never invent keys:
+the set is closed and `E002`/`E003` list the valid values.
+
+Accessibility is not optional: always declare the chart title (it becomes the SVG `<title>`); the
+SVG already carries `role="img"`, `<title>`, `<desc>` and one `aria-label` per element, and the
+themes guarantee contrast (4.5:1 text, 3:1 outline). Never encode meaning by colour alone.
+
+Exit codes: 0 ok | 1 `fmt --check` differs or `diff` found changes | 2 usage | 3 not found |
+5 I/O | 8 invalid source | 70 internal.

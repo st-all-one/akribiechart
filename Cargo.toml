@@ -1,0 +1,134 @@
+[workspace]
+# Edition 2024 usa resolver v3 por padrão (MSRV-aware); declarado para ficar explícito (ADR-0001).
+resolver = "3"
+members = ["crates/akribie-core", "crates/akribie-cli", "crates/akribie-mcp"]
+# `xtask` é ferramenta de build com lock próprio (woff2 fixa `bytes =1.9.0`); fora do
+# lockfile publicado para não contaminar a superfície de dependências do produto (ADR-0001 §5.1).
+exclude = ["xtask"]
+default-members = ["crates/akribie-cli"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.99"
+license = "MIT OR Apache-2.0"
+publish = false
+repository = "https://github.com/st-all-one/akribie"
+homepage = "https://github.com/st-all-one/akribie"
+
+[workspace.dependencies]
+# core (puro)
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+indexmap = "2"
+unicode-segmentation = "1.13"
+# Shaping HarfBuzz portátil (sucessor do rustybuzz, sob o projeto HarfBuzz).
+harfrust = "0.15"
+dugong = "=0.9.3"
+# core (feature `raster`)
+resvg = "0.49"
+usvg = "0.49"
+tiny-skia = { version = "0.12", features = ["png-format"] }
+image = { version = "0.25", default-features = false, features = ["jpeg", "avif"] }
+# cli / mcp (adaptadores)
+clap = { version = "4.6", features = ["derive"] }
+# xtask
+woff2 = "0.3"
+
+[profile.release]
+lto = "fat"
+codegen-units = 1
+strip = "symbols"
+panic = "abort"
+overflow-checks = true
+
+[profile.dev]
+overflow-checks = true
+
+# Lints de workspace — ADR-0001 §4. Todo lint de grupo entra como `deny`; pedantic fica `warn`
+# porque o portão (`clippy -D warnings`) o promove, mas permite allow pontual com `reason`.
+[workspace.lints.rust]
+unsafe_code = "deny"
+missing_docs = "warn"
+unused_qualifications = "deny"
+unused_lifetimes = "deny"
+elided_lifetimes_in_paths = "deny"
+single_use_lifetimes = "deny"
+trivial_casts = "deny"
+trivial_numeric_casts = "deny"
+unreachable_pub = "warn"
+unsafe_op_in_unsafe_fn = "deny"
+let_underscore_drop = "deny"
+macro_use_extern_crate = "deny"
+meta_variable_misuse = "deny"
+non_ascii_idents = "deny"
+noop_method_call = "deny"
+unused_import_braces = "deny"
+variant_size_differences = "warn"
+
+[workspace.lints.rustdoc]
+broken_intra_doc_links = "deny"
+
+[workspace.lints.clippy]
+# Grupos
+all = { level = "deny", priority = -1 }
+correctness = { level = "deny", priority = -1 }
+suspicious = { level = "deny", priority = -1 }
+style = { level = "deny", priority = -1 }
+complexity = { level = "deny", priority = -1 }
+perf = { level = "deny", priority = -1 }
+pedantic = { level = "warn", priority = -1 }
+cargo = { level = "warn", priority = -1 }
+
+# Restriction curada — o conjunto exigido pelo ADR-0001 §4 e pela §5.3 do plano.
+unwrap_used = "deny"
+expect_used = "deny"
+panic = "deny"
+todo = "deny"
+unimplemented = "deny"
+unreachable = "deny"
+dbg_macro = "deny"
+print_stdout = "deny"
+print_stderr = "deny"
+exit = "deny"
+mem_forget = "deny"
+indexing_slicing = "deny"
+as_conversions = "deny"
+cast_possible_truncation = "deny"
+cast_sign_loss = "deny"
+cast_possible_wrap = "deny"
+cast_lossless = "deny"
+undocumented_unsafe_blocks = "deny"
+multiple_unsafe_ops_per_block = "deny"
+let_underscore_must_use = "deny"
+absolute_paths = "warn"
+wildcard_imports = "deny"
+fn_params_excessive_bools = "deny"
+struct_excessive_bools = "deny"
+disallowed_macros = "deny"
+disallowed_methods = "deny"
+disallowed_types = "deny"
+disallowed_names = "deny"
+allow_attributes_without_reason = "deny"
+
+# Tamanho / performance
+large_enum_variant = "deny"
+result_large_err = "warn"
+large_types_passed_by_value = "warn"
+large_stack_arrays = "deny"
+large_futures = "warn"
+
+# Ruidosas: abrimos mão (documentado em docs/specs/ARCHITECTURE.md §lints).
+module_name_repetitions = "allow"
+must_use_candidate = "allow"
+missing_errors_doc = "allow"
+missing_panics_doc = "allow"
+implicit_hasher = "allow"
+multiple_crate_versions = "allow"
+min_ident_chars = "allow"
+many_single_char_names = "allow"
+missing_docs_in_private_items = "allow"
+similar_names = "allow"
+cast_precision_loss = "allow"
+struct_field_names = "allow"
+return_self_not_must_use = "allow"

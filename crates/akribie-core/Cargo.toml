@@ -1,0 +1,31 @@
+[package]
+name = "akribie-core"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish.workspace = true
+repository.workspace = true
+homepage.workspace = true
+description = "Compilador determinístico de diagramas: `.akrc` → SVG/scene/raster."
+
+[features]
+default = ["raster"]
+# Desligar `raster` remove resvg/usvg/tiny-skia/image (e a cadeia rav1e) e deixa só
+# SVG/scene/excalidraw. Medição e layout continuam funcionando.
+raster = ["dep:resvg", "dep:usvg", "dep:tiny-skia", "dep:image"]
+
+[dependencies]
+serde.workspace = true
+serde_json.workspace = true
+indexmap.workspace = true
+unicode-segmentation.workspace = true
+harfrust.workspace = true
+dugong.workspace = true
+resvg = { workspace = true, optional = true }
+usvg = { workspace = true, optional = true }
+tiny-skia = { workspace = true, optional = true }
+image = { workspace = true, optional = true }
+
+[lints]
+workspace = true

@@ -1,0 +1,17 @@
+[workspace]
+
+[package]
+name = "xtask"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.99"
+license = "MIT OR Apache-2.0"
+publish = false
+description = "Utilitários de build do akribie (fonte woff2 → ttf)."
+
+[dependencies]
+woff2 = "0.3"
+# Pin transitivo: `woff2 0.3.0` chama `SafeBuf::try_get_u8` sobre `bytes::Cursor`, e `bytes >= 1.10`
+# acrescentou `Buf::try_get_u8` — a resolução de método fica ambígua e o crate não compila.
+# Não usamos `bytes` diretamente; existe só para fixar a versão que o `woff2` enxerga.
+bytes = "=1.9.0"

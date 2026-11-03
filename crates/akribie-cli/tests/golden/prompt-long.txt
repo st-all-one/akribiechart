@@ -1,0 +1,156 @@
+akribie — `.akrc` → accessible SVG, raster, scene JSON, Excalidraw
+
+Write topology, not coordinates: declare nodes and edges; `akr` computes geometry.
+One statement per line, UTF-8 without BOM. Blank lines are free. `#` starts a comment.
+
+chart v1 "Title" [layout=flow|tree|mindmap|grid|stack|free] [direction=lr|tb|bt|rl]
+               [theme=paper|slate] [fontsize=20] [pad=32] [lang=en] [sketch=on|off]
+               [font=hand|sans] [doc="path#anchor"]
+group ID ["Label"] [fill=…] [stroke=…] [pad=24] [in=ID,ID]
+node ID ["Label"] [shape=rect|rounded|circle|diamond|cloud|cylinder|hexagon|note|text]
+                 [fill=none|paper|blue|green|amber|red|violet]
+                 [fillstyle=hachure|solid|cross-hatch|zigzag]
+                 [stroke=ink|muted|none|paper|blue|green|amber|red|violet]
+                 [style=solid|dashed|dotted] [width=2] [in=ID,ID] [at=x,y] [size=w,h]
+edge FROM -> TO ["Label"] [curve=line|arc|elbow] [head=arrow|none] [tail=arrow|none] [style=…]
+note "Text" [fill=…] [at=x,y] [size=w,h] [near=ID]
+
+Layouts: flow = pipeline (direction), tree = hierarchy, mindmap = topics, grid = catalog,
+         stack = one column, free = declared positions (every node/note needs `at=x,y`).
+
+Finish: `sketch=on` (default) is hand-drawn; `sketch=off` is technical (exact lines, real arcs).
+Font: `font=hand` (default) is Excalifont; `font=sans` is Liberation Sans. Labels never touch a
+line, a border or another block: edge labels interrupt their own line with a 6 px gap.
+
+Example 1 — retry with backoff:
+
+chart v1 "Retry" layout=flow direction=lr
+node api "API" fill=blue
+node retry "Retry x3" fill=amber shape=cloud
+node dlq "DLQ" fill=red shape=cylinder
+edge api -> retry "5xx"
+edge retry -> api "backoff" curve=arc style=dashed
+edge retry -> dlq "exhausted" style=dashed
+
+Example 2 — grouped pipeline:
+
+chart v1 "Pipeline" layout=flow direction=lr
+group ingest "Ingest" fill=paper
+node src "Source" in=ingest
+node queue "Queue" in=ingest shape=cylinder
+node worker "Worker"
+edge src -> queue
+edge queue -> worker "job"
+
+Fixing errors: `akr check` exits 8 and prints `file:line:col: E0xx name: message` plus a `hint:`.
+Rewrite only the reported line and resend. Never rewrite the whole document, never invent keys:
+the set is closed and `E002`/`E003` list the valid values.
+
+Accessibility is not optional: always declare the chart title (it becomes the SVG `<title>`); the
+SVG already carries `role="img"`, `<title>`, `<desc>` and one `aria-label` per element, and the
+themes guarantee contrast (4.5:1 text, 3:1 outline). Never encode meaning by colour alone.
+
+Exit codes: 0 ok | 1 `fmt --check` differs or `diff` found changes | 2 usage | 3 not found |
+5 I/O | 8 invalid source | 70 internal.
+
+## BNF
+
+chart      = "chart" WS version WS quoted { WS option } ;
+    version    = "v1" ;
+    group      = "group" WS ident [ WS quoted ] { WS option } ;
+    node       = "node" WS ident [ WS quoted ] { WS option } ;
+    edge       = "edge" WS ident WS "->" WS ident [ WS quoted ] { WS option } ;
+    note       = "note" WS quoted { WS option } ;
+    option     = key "=" value ;
+    value      = quoted | number | ident | pair | list ;
+    pair       = number "," number ;
+    list       = ident { "," ident } ;
+    quoted     = "\"" { char - ">" - "\"" - "\\" | escape } "\"" ;
+    ident      = letter { letter | digit | "_" | "-" } ;
+    number     = [ "-" ] digit { digit } [ "." digit ] ;
+    statement  = chart | group | node | edge | note ;
+    document   = statement { newline statement } [ newline ] ;
+
+## Keys per statement
+
+chart:
+  layout    enum  default=flow values=flow|tree|mindmap|grid|stack|free
+  direction enum  default=lr values=lr|tb|bt|rl
+  theme     enum  default=paper values=paper|slate
+  fontsize  number default=20 range=14..96
+  pad       number default=32 range=0..256
+  lang      bareword default=en
+  sketch    enum  default=on values=on|off
+  font      enum  default=hand values=hand|sans
+  doc       string
+
+group:
+  fill      token default=none values=none|paper|blue|green|amber|red|violet
+  stroke    token default=ink values=none|paper|ink|muted|blue|green|amber|red|violet
+  style     enum  default=solid values=solid|dashed|dotted
+  width     number default=2 range=2..6
+  pad       number default=24 range=0..256
+  in        idlist
+
+node:
+  shape     enum  default=rounded values=rect|rounded|circle|diamond|cloud|cylinder|hexagon|note|text
+  fill      token default=none values=none|paper|blue|green|amber|red|violet
+  fillstyle enum  default=hachure values=hachure|solid|cross-hatch|zigzag
+  stroke    token default=ink values=none|paper|ink|muted|blue|green|amber|red|violet
+  style     enum  default=solid values=solid|dashed|dotted
+  width     number default=2 range=2..6
+  in        idlist
+  at        pair 
+  size      pair  range=1..
+
+edge:
+  curve     enum  default=line values=line|arc|elbow
+  head      enum  default=arrow values=arrow|none
+  tail      enum  default=none values=arrow|none
+  style     enum  default=solid values=solid|dashed|dotted
+  stroke    token default=ink values=none|paper|ink|muted|blue|green|amber|red|violet
+  width     number default=2 range=2..6
+
+note:
+  fill      token default=amber values=none|paper|blue|green|amber|red|violet
+  at        pair 
+  size      pair  range=1..
+  near      ident
+
+## Theme tokens
+paper: canvas=#ffffff ink=#1e1e1e
+  paper=#ffffff
+  ink=#1e1e1e
+  muted=#5c5c5c
+  blue=#a5d8ff
+  green=#b2f2bb
+  amber=#ffec99
+  red=#ffc9c9
+  violet=#d0bfff
+slate: canvas=#121212 ink=#e8e8e8
+  paper=#121212
+  ink=#e8e8e8
+  muted=#b4b4b4
+  blue=#1e3a5f
+  green=#1e4620
+  amber=#5c4813
+  red=#5f1e1e
+  violet=#3c2f6b
+
+## Diagnostics
+E001 unknown-keyword (error)
+E002 unknown-key (error)
+E003 invalid-value (error)
+E004 duplicate-id (error)
+E005 missing-reference (error)
+E006 missing-position (error)
+E007 malformed-line (error)
+E008 missing-chart (error)
+E009 unsupported-version (error)
+W001 implicit-node (warn)
+W002 isolated-node (warn)
+W003 missing-glyph (warn)
+W004 doc-missing (warn)
+W005 color-unmapped (warn)
+W006 element-dropped (warn)
+W007 low-contrast (warn)

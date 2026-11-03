@@ -1,0 +1,141 @@
+# =============================================================================
+# akribie — clippy.toml (rigor máximo · Rust 1.99 / Edition 2024)
+# Os NÍVEIS dos lints ficam em [workspace.lints] no Cargo.toml.
+# Referência de formato: _REF/knudge/clippy.toml.
+# =============================================================================
+
+# ------------------------------------------------------------------- unsafe --
+accept-comment-above-attributes = false
+accept-comment-above-statement = false
+
+# ----------------------------------------------- unwrap/expect/panic (D92) ---
+allow-expect-in-consts = false
+# `unwrap`/`expect` seguem proibidos no domínio (ADR-0001 §4); em teste, uma asserção precisa
+# falhar alto e apontar a linha, e o `?` de teste não dá mensagem.
+allow-expect-in-tests = true
+allow-unwrap-in-consts = false
+allow-unwrap-in-tests = true
+allow-panic-in-tests = false
+
+# ------------------------------------------------------------------- testes --
+allow-dbg-in-tests = false
+allow-print-in-tests = false
+allow-useless-vec-in-tests = false
+allow-indexing-slicing-in-tests = true # goldens leem slices literais
+allow-large-stack-frames-in-tests = true
+
+# --------------------------------------------- estilo / padronização global --
+allow-mixed-uninlined-format-args = false
+allow-one-hash-in-raw-strings = false
+unreadable-literal-lint-fractions = true
+upper-case-acronyms-aggressive = true
+enforce-iter-loop-reborrow = true
+lint-commented-code = true
+module-items-ordered-within-groupings = "all"
+warn-on-all-wildcard-imports = true
+allowed-wildcard-imports = []
+
+# ----------------------------------------------- complexidade / tamanho -------
+cognitive-complexity-threshold = 25
+type-complexity-threshold = 250
+too-many-lines-threshold = 100
+too-many-arguments-threshold = 8
+excessive-nesting-threshold = 4
+max-trait-bounds = 3
+max-suggested-slice-pattern-length = 3
+single-char-binding-names-threshold = 2
+
+# ------------------------------------------------- bools / API / tamanhos ----
+max-fn-params-bools = 0
+# `CheckArgs`/`RenderArgs` acumulam flags booleanas de clap por desenho; funções seguem em 0.
+max-struct-bools = 3
+enum-variant-size-threshold = 128
+enum-variant-name-threshold = 3
+struct-field-name-threshold = 3
+large-error-threshold = 128
+pass-by-value-size-limit = 128
+array-size-threshold = 4096
+stack-size-threshold = 65536
+future-size-threshold = 8192
+vec-box-size-threshold = 4096
+
+# ------------------------------------------------------------ MSRV / docs ----
+msrv = "1.99"
+avoid-breaking-exported-api = false
+check-incompatible-msrv-in-tests = true
+check-private-items = true
+missing-docs-allow-unused = false
+inherent-impl-lint-scope = "crate"
+enable-raw-pointer-heuristic-for-send = true
+
+# -------------------------------------------------------------- aritmética ----
+arithmetic-side-effects-allowed = ["Wrapping", "Saturating", "f32", "f64"]
+arithmetic-side-effects-allowed-binary = []
+arithmetic-side-effects-allowed-unary = []
+suppress-restriction-lint-in-const = false
+verbose-bit-mask-threshold = 1
+const-literal-digits-threshold = 30
+literal-representation-threshold = 16384
+
+# ---------------------------------------------------- listas de proibição ----
+disallowed-names = ["foo", "baz", "quux", "tmp", "thing", "stuff", "misc"]
+
+disallowed-types = [
+  { path = "std::collections::HashMap", reason = "iteração não determinística; use IndexMap/BTreeMap (ADR-0001 §2)" },
+  { path = "std::collections::HashSet", reason = "iteração não determinística; use IndexSet/BTreeSet (ADR-0001 §2)" },
+  { path = "std::collections::LinkedList", reason = "cache-hostil; use Vec/VecDeque" },
+  { path = "std::rc::Rc", reason = "não é Send/Sync; use Arc" },
+  { path = "std::cell::RefCell", reason = "interior mutability em runtime; use Mutex/RwLock" },
+]
+
+disallowed-methods = [
+  { path = "std::env::var", reason = "não determinístico; use a porta Env (ADR-0001 §2)" },
+  { path = "std::env::vars", reason = "não determinístico; use a porta Env (ADR-0001 §2)" },
+  { path = "std::time::SystemTime::now", reason = "não determinístico; o scene não carrega tempo (ADR-0001 §2)" },
+  { path = "std::time::Instant::now", reason = "não determinístico (ADR-0001 §2)" },
+  { path = "std::process::exit", reason = "propague Result; exit codes vivem na CLI" },
+  { path = "std::mem::forget", reason = "vazamento; use RAII/Drop" },
+  { path = "std::mem::transmute", reason = "UB potencial" },
+]
+
+disallowed-macros = [
+  { path = "std::dbg", reason = "remova antes do commit" },
+  { path = "std::todo", reason = "inacabado; implemente ou retorne Error" },
+  { path = "std::unimplemented", reason = "inacabado; retorne Error" },
+  { path = "std::unreachable", reason = "prove a impossibilidade sem panic" },
+  { path = "std::panic", reason = "propague Result" },
+]
+
+# ------------------------------------------------ ordenação / documentação ----
+doc-valid-idents = [
+  "akribie", "akr", "akrc", "ADR", "LLM", "MCP", "CLI", "API", "SVG", "PNG",
+  "JPG", "AVIF", "JSON", "JSONL", "TOML", "UTF", "BOM", "WCAG", "EPIPE", "TTY",
+  "Excalidraw", "Excalifont", "dagre", "dugong", "harfrust", "woff2",
+  "hachure", "cross-hatch", "base62", "mulberry", "FNV", "Reingold", "Tilford",
+  "GitHub", "HarfBuzz",
+  "Sugiyama", "viewBox", "clipPath", "aria", "href", "enum", "struct", "iter",
+  "usvg", "resvg", "pixmap", "rgb", "rgba", "dasharray", "idlist", "noop",
+]
+
+standard-macro-braces = [
+  { name = "vec", brace = "[" },
+  { name = "format", brace = "(" },
+  { name = "write", brace = "(" },
+  { name = "writeln", brace = "(" },
+  { name = "assert", brace = "(" },
+  { name = "assert_eq", brace = "(" },
+  { name = "assert_ne", brace = "(" },
+  { name = "debug_assert", brace = "(" },
+  { name = "matches", brace = "(" },
+]
+
+# ------------------------------------------------------------------ diversos --
+absolute-paths-allowed-crates = ["std", "core", "alloc"]
+absolute-paths-max-segments = 2
+allow-comparison-to-zero = true
+allow-exact-repetitions = true
+allowed-dotfiles = []
+allowed-duplicate-crates = []
+allowed-prefixes = ["to", "as", "into", "from", "try_into", "try_from"]
+allowed-scripts = ["Latin"]
+cargo-ignore-publish = false

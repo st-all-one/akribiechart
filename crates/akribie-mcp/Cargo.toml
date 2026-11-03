@@ -1,0 +1,22 @@
+[package]
+name = "akribie-mcp"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish.workspace = true
+repository.workspace = true
+homepage.workspace = true
+description = "Servidor MCP do akribie (JSON-RPC 2.0 sobre stdio)."
+
+[[bin]]
+name = "akribie-mcp"
+path = "src/main.rs"
+
+[dependencies]
+akribie-core = { path = "../akribie-core", version = "0.1.0" }
+serde.workspace = true
+serde_json.workspace = true
+
+[lints]
+workspace = true

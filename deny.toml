@@ -1,0 +1,47 @@
+# cargo-deny — ADR-0001 §5.1 (superfície de dependências fechada)
+[graph]
+# Superfície real do produto: features padrão. `all-features` puxaria as dependências de
+# fuzzing do `rav1e` (`libfuzzer-sys`, licença NCSA), que nunca entram no binário.
+all-features = false
+
+[advisories]
+version = 2
+yanked = "deny"
+# Desvios conscientes, com motivo e rota de saída (revisados a cada bump de dependência).
+ignore = [
+  # `rav1e` (encoder AVIF, via `image`) depende de `paste`, arquivado por dtolnay.
+  # É macro de build do encoder; não há código do `paste` no binário e não há substituto
+  # até o `rav1e` trocar a dependência. Reavaliar quando `rav1e` ou `ravif` publicar correção.
+  "RUSTSEC-2024-0436",
+]
+
+[licenses]
+version = 2
+confidence-threshold = 0.9
+allow = [
+  "MIT",
+  "Apache-2.0",
+  "Apache-2.0 WITH LLVM-exception",
+  "BSD-2-Clause",
+  "BSD-3-Clause",
+  "ISC",
+  "Zlib",
+  "Unicode-3.0",
+  "OFL-1.1",
+  "CC0-1.0",
+  "MPL-2.0",
+  "Unlicense",
+  "BSL-1.0",
+  "CDLA-Permissive-2.0",
+  # `libfuzzer-sys` (dependência de fuzzing do `rav1e`): licença permissiva da Universidade de
+  # Illinois. Só aparece no lock via `rav1e`, nunca é compilado no binário do produto.
+  "NCSA",
+]
+
+[bans]
+multiple-versions = "warn"
+wildcards = "deny"
+
+[sources]
+unknown-registry = "deny"
+unknown-git = "deny"

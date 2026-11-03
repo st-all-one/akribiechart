@@ -1,0 +1,10 @@
+# topo do documento
+chart   v1   "Política de retry"   theme=paper   lang=pt-BR direction=lr layout=flow fontsize=20.00 pad=32
+
+node retry "Retry ×3"   fill=amber shape=cloud
+edge api -> retry "5xx"   style=dashed
+group core "Núcleo"
+node api "API Gateway"   fill=blue   shape=rounded
+edge retry -> dlq "esgotado"
+# nota solta
+note "Checar backoff"   near=retry

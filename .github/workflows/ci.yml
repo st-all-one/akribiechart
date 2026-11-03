@@ -1,0 +1,27 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+env:
+  CARGO_TERM_COLOR: always
+  RUSTFLAGS: -D warnings
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: "1.99"
+          components: rustfmt, clippy
+      - uses: Swatinem/rust-cache@v2
+      - name: make check
+        run: make check
+      - name: install.sh (sintaxe)
+        run: bash -n install.sh
+      - name: xtask compila
+        run: cargo run -p xtask --manifest-path xtask/Cargo.toml -- --help || true

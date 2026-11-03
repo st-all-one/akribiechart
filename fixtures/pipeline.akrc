@@ -1,0 +1,20 @@
+chart v1 "Pipeline de ingestão" direction=lr lang=pt-BR layout=flow theme=paper
+
+group edge "Borda" fill=violet
+
+node cdn "CDN" fill=blue in=edge
+node api "API" fill=blue in=edge
+node queue "Fila" fill=amber shape=cylinder
+node worker "Worker" fill=green
+node db "Banco" fill=green shape=cylinder
+node dlq "DLQ" fill=red shape=cylinder
+node dash "Painel" fill=violet shape=note
+
+edge cdn -> api "HTTPS"
+edge api -> queue "enfileira"
+edge queue -> worker "consome"
+edge worker -> db "grava"
+edge worker -> dlq "3 falhas" curve=arc style=dashed
+edge db -> dash "coleta" style=dashed
+
+note "escala horizontal" near=dash

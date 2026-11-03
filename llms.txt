@@ -1,0 +1,62 @@
+# akribie
+
+> Compilador determinístico de diagramas: `.akrc` (texto) → SVG acessível, PNG/JPG/AVIF, `scene` JSON
+> e `.excalidraw`. Binário único `akr`, local, offline, sem daemon. O usuário declara topologia e
+> rótulos; geometria é derivada.
+
+## Fatos para agentes
+
+- Fonte versionada: `.akrc`, UTF-8 sem BOM, uma afirmação por linha. Forma canônica por `akr fmt`.
+- `stdout` = dados, `stderr` = logs. `--json` = `{"success","command","data"?,"error"?,"warnings"}`.
+- Exit codes: 0 sucesso · 1 `fmt --check` diferiu · 2 uso inválido · 3 não encontrado · 5 I/O ·
+  8 schema inválido · 70 invariante interna.
+- Determinismo: SVG e `scene` são contrato de bytes; raster é determinístico na versão.
+- Acessibilidade: `role="img"`, `<title>`, `<desc>` com a topologia, `aria-label` por elemento,
+  contraste 4.5:1 (texto) e 3:1 (contorno).
+- Diagnóstico: `<arquivo>:<linha>:<col>: <CODE> <nome>: <mensagem>` + `hint:` com a correção.
+- Correção de erro: reescreva a linha apontada e reenvie; não reescreva o documento inteiro.
+
+## Verbos
+
+- `akr init` — cria `akribie.toml`, bloco em `AGENTS.md` e skill em `.agents/skills/akr/`
+  (idempotente; `--force` reescreve a config).
+- `akr prompt [--long]` — gramática e regras em texto, para colar em um agente.
+- `akr check [FILE|-] [--strict] [--docs] [--batch FILE|-] [--json]` — valida e diagnostica.
+- `akr fmt [FILE|-] [--write|--check]` — forma canônica.
+- `akr render [FILE|-] [--format svg|png|jpg|avif|scene|excalidraw] [--out PATH] [--scale N]`.
+- `akr import [FILE|-]` — `.excalidraw` → `.akrc`.
+- `akr diff [OLD] [NEW] [--at REV] [--json]` — mudanças semânticas.
+- `akr schema` — JSON com statements, chaves, valores fechados, tokens e códigos.
+- `akr render --batch FILE --out-dir DIR` e `akr check --batch FILE` — lote JSONL, best-effort
+  (exit 0 se ao menos um item passa).
+- MCP: `akribie-mcp` expõe `chart_check`, `chart_render` e `chart_diff` por JSON-RPC sobre stdio;
+  falha de execução é `isError: true`, nunca queda do servidor.
+
+## Gramática (resumo)
+
+```
+chart v1 "Título" [layout=flow|tree|mindmap|grid|stack|free] [direction=lr|tb|bt|rl]
+                  [theme=paper|slate] [fontsize=20] [pad=32] [lang=en] [sketch=on|off]
+                  [font=hand|sans] [doc="path#anchor"]
+group  ID [ "Rótulo" ] [fill=…] [stroke=…] [pad=24] [in=ID,ID]
+node   ID [ "Rótulo" ] [shape=…] [fill=…] [fillstyle=hachure|solid|cross-hatch|zigzag]
+                       [stroke=…] [style=solid|dashed|dotted] [width=2] [in=…] [at=x,y] [size=w,h]
+edge   FROM -> TO [ "Rótulo" ] [curve=line|arc|elbow] [head=arrow|none] [tail=arrow|none]
+note   "Texto" [fill=amber] [at=x,y] [size=w,h] [near=ID]
+```
+
+## Docs
+
+- [Panorama](docs/plan/00-panorama.md): pipeline, artefatos, escopo.
+- [ADR-0001](docs/adr/ADR-0001-simplicidade-determinismo-di.md): simplicidade, determinismo, portas.
+- [ADR-0002](docs/adr/ADR-0002-fonte-texto-canonica.md): fonte canônica.
+- [ADR-0003](docs/adr/ADR-0003-layout-por-perfil.md): seis perfis de layout.
+- [ADR-0004](docs/adr/ADR-0004-excalidraw-derivado.md): Excalidraw derivado.
+- [ADR-0005](docs/adr/ADR-0005-acessibilidade-svg.md): contrato de acessibilidade.
+- [Gramática](docs/specs/GRAMMAR.md): contrato completo do `.akrc`.
+- [A11Y](docs/specs/A11Y.md): SVG acessível e contraste.
+- [Determinismo](docs/specs/DETERMINISM.md): o que é contrato de bytes.
+- [Arquitetura](docs/specs/ARCHITECTURE.md): módulos e portas.
+- [Matriz de aceitação](docs/plan/02-matriz-aceitacao.md): definição de pronto por verbo.
+- [Uso por verbo](docs/usage/00-quickstart.md): quickstart; 01-check, 02-fmt, 03-render,
+  04-import, 05-diff, 06-init-prompt (inclui MCP), 07-schema.
