@@ -13,7 +13,7 @@ ordem é obrigatória: M5 consome a geometria de M4, e M7 consome o `Scene` de M
 | **M5** | `sketch`, `paint`, `emit/svg` acessível, `emit/raster`, comando `render` | dois renders = SVG idêntico; `role`/`title`/`desc` presentes e válidos em `xmllint`; PNG/JPG/AVIF reconhecidos |
 | **M6** | `emit/scene_json`, `diff`, comando `diff` | três mudanças produzem exatamente três linhas, na ordem `added`/`removed`/`changed` |
 | **M7** | `pipeline::batch_lines` + driver de lote na CLI, `--batch` em `render`/`check`, export/import Excalidraw, `doc.rs`, `--at REV` | lote de 3 (2 válidos, 1 inválido) sai 0 e escreve 2 arquivos; export valida em `jq`; import gera `.akrc` aceito |
-| **M8** | `init`, `prompt`, `akribie-mcp`, docs de uso/specs/MODULE, matriz preenchida | `init` idempotente; `prompt` byte-idêntico; MCP lista 3 tools e não cai em erro |
+| **M8** | `init`, `prime`, `akribie-mcp`, docs de uso/specs/MODULE, matriz preenchida | `init` idempotente; `prime` byte-idêntico; MCP lista 3 tools e não cai em erro |
 
 ## M0 — esqueleto, governança e fonte
 
@@ -26,7 +26,7 @@ do workspace. Lints de workspace, `clippy.toml`, `rustfmt.toml`, `rust-toolchain
 ## M1 — léxico, AST, parser e `check`
 
 Uma tabela de opções (`option_specs`) é a fonte única de chaves, tipos, defaults e valores fechados;
-parser, `akr schema` e `akr prompt` leem dela. Recuperação **por linha**: uma linha inválida produz
+parser, `akr schema` e `akr prime` leem dela. Recuperação **por linha**: uma linha inválida produz
 diagnóstico e não invalida as demais. Portas com fakes. `--params` deserializado por verbo, com
 conflito posicional ⇒ exit 2.
 
@@ -68,9 +68,9 @@ constrói `index` e `fixedPoint` válidos; import recalcula rota e anuncia perda
 `doc=` é resolvido só com `--docs` (`W004`), com âncora aceita como texto sem caixa ou como slug do
 título. `--at REV` lê via `git show` pela porta `Git`.
 
-## M8 — `init`, `prompt`, MCP e documentação final
+## M8 — `init`, `prime`, MCP e documentação final
 
 `init` instala `akribie.toml`, bloco em `AGENTS.md` e skill em `.agents/skills/akr/SKILL.md`, com
-marcadores e idempotência. `prompt` é constante em inglês, byte-idêntica por versão. MCP expõe
+marcadores e idempotência. `prime` é constante em inglês, byte-idêntica por versão. MCP expõe
 `chart_check`, `chart_render`, `chart_diff` sobre stdio, com erro como `isError` e servidor vivo.
 Documentação de uso por verbo, specs normativas, `MODULE.md` por crate e matriz preenchida.

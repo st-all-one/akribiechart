@@ -83,3 +83,32 @@ fn force_rewrites_the_config() {
             .contains("layout = flow")
     );
 }
+
+#[test]
+fn installed_skill_is_the_repository_skill() {
+    let fs = MemFs::new();
+    execute(Force::No, &fs).expect("init");
+    assert_eq!(
+        fs.contents(".agents/skills/akr/SKILL.md").expect("skill"),
+        include_str!("../../../../../SKILL.md")
+    );
+}
+
+#[test]
+fn agents_block_covers_the_whole_workflow() {
+    let fs = MemFs::new();
+    execute(Force::No, &fs).expect("init");
+    let agents = fs.contents(AGENTS).expect("AGENTS.md");
+    for needle in [
+        "akr check",
+        "akr fmt",
+        "akr render",
+        "akr diff",
+        "akr import",
+        "akr schema",
+        "akribie.toml",
+        "akribie-mcp",
+    ] {
+        assert!(agents.contains(needle), "bloco sem {needle}:\n{agents}");
+    }
+}

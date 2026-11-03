@@ -20,7 +20,7 @@ A saída é JSON *pretty* com `\n` final e **não** é um envelope `--json`: o s
 ```json
 {
   "schema_version": 1,
-  "akribie_version": "0.1.0",
+  "akribie_version": "0.1.2",
   "keywords": ["chart", "group", "node", "edge", "note"],
   "statements": {
     "chart": { "options": [ { "key": "layout", "type": "enum", "default": "flow",
@@ -40,7 +40,7 @@ A saída é JSON *pretty* com `\n` final e **não** é um envelope `--json`: o s
 
 Nada aqui é escrito à mão: `statements` vem de `syntax::option_specs` (a mesma tabela do parser),
 `themes` de `theme`, `diagnostics` de `diag` e `exit_codes` de `error`. Uma chave nova no núcleo
-aparece no schema sem edição adicional — e `akr prompt --long` mostra as mesmas tabelas em texto.
+aparece no schema sem edição adicional — e `akr prime --long` mostra as mesmas tabelas em texto.
 
 ## `--params` por verbo
 

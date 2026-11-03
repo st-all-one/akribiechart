@@ -1,6 +1,6 @@
-//! `akr prompt`: gramática, regras e tabelas em texto — para colar em um agente.
+//! `akr prime`: gramática, regras e tabelas em texto — para colar em um agente.
 //!
-//! O prompt é **contrato de bytes por versão** (golden em `tests/golden/`). O compacto é constante;
+//! O prime é **contrato de bytes por versão** (golden em `tests/golden/`). O compacto é constante;
 //! o `--long` anexa a BNF, as tabelas de chaves (derivadas de `syntax::option_specs`, a mesma fonte
 //! do parser) e os tokens dos temas.
 
@@ -10,8 +10,8 @@ use akribie_core::diag;
 use akribie_core::syntax::{self, StmtKind};
 use akribie_core::theme;
 
-/// Prompt compacto: o que um agente precisa saber para escrever `.akrc` correto na primeira tentativa.
-pub(crate) const PROMPT_COMPACT: &str = "\
+/// Prime compacto: o que um agente precisa saber para escrever `.akrc` correto na primeira tentativa.
+pub(crate) const PRIME_COMPACT: &str = "\
 akribie — `.akrc` → accessible SVG, raster, scene JSON, Excalidraw
 
 Write topology, not coordinates: declare nodes and edges; `akr` computes geometry.
@@ -92,7 +92,7 @@ fn append(text: &mut String, args: std::fmt::Arguments<'_>) {
     text.write_fmt(args).unwrap_or(());
 }
 
-/// Profundidade do prompt.
+/// Profundidade do prime.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub(crate) enum Length {
     /// Só o compacto (golden por versão).
@@ -101,9 +101,9 @@ pub(crate) enum Length {
     Long,
 }
 
-/// Texto do prompt: compacto ou compacto + BNF + tabelas + temas.
+/// Texto do prime: compacto ou compacto + BNF + tabelas + temas.
 pub(crate) fn render(length: Length) -> String {
-    let mut text = String::from(PROMPT_COMPACT);
+    let mut text = String::from(PRIME_COMPACT);
     if matches!(length, Length::Long) {
         text.push_str("\n## BNF\n\n");
         text.push_str(BNF);

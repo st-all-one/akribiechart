@@ -21,12 +21,12 @@ com `pendente` ao fim de M8.
 | 1 | cria config, bloco e skill | relatório `novo:`/`atualizado:`/`inalterado:`/`preservado:` + `próximos:` | — | exit 0 | `akribie.toml`, bloco em `AGENTS.md`, `.agents/skills/akr/SKILL.md` | `akribie-cli/tests/init.rs::init_installs_files_and_the_second_run_changes_nothing`, `::init_config_is_read_by_check`; `akribie-cli/src/commands/init/tests.rs::first_run_creates_config_block_and_skill` |
 | 2 | segunda execução é idempotente | três linhas `inalterado:` | — | exit 0 | bloco não duplica; skill e config intactos; arquivo de terceiro é `preservado` | `akribie-cli/src/commands/init/tests.rs::second_run_is_idempotent_and_does_not_duplicate_the_block`, `::existing_block_is_replaced_in_place_and_keeps_the_rest`, `::foreign_skill_is_preserved`, `::force_rewrites_the_config` |
 
-## `akr prompt`
+## `akr prime`
 
 | # | caso | pipe | `--json` | erro+exit | estado/arquivo | teste |
 |---|---|---|---|---|---|---|
-| 1 | compacto é byte-idêntico | dois `akr prompt` = mesmos bytes; golden confere | — | — | — | `akribie-cli/tests/prompt.rs::compact_prompt_is_byte_identical_and_matches_the_golden`; golden `tests/golden/prompt-compact.txt` |
-| 2 | `--long` anexa BNF e tabelas | começa pelo compacto + BNF + chaves + temas + códigos | — | — | — | `akribie-cli/tests/prompt.rs::long_appends_bnf_tables_and_theme_tokens`; golden `tests/golden/prompt-long.txt` |
+| 1 | compacto é byte-idêntico | dois `akr prime` = mesmos bytes; golden confere | — | — | — | `akribie-cli/tests/prime.rs::compact_prime_is_byte_identical_and_matches_the_golden`; golden `tests/golden/prime-compact.txt` |
+| 2 | `--long` anexa BNF e tabelas | começa pelo compacto + BNF + chaves + temas + códigos | — | — | — | `akribie-cli/tests/prime.rs::long_appends_bnf_tables_and_theme_tokens`; golden `tests/golden/prime-long.txt` |
 
 ## `akr check`
 
@@ -91,4 +91,4 @@ com `pendente` ao fim de M8.
 | T4 | contraste WCAG de todas as combinações | — | — | `W007` + exit 8 sob `--strict` | — | `akribie-core/src/theme/tests.rs::text_meets_aa_on_every_fill`, `::ink_and_muted_strokes_meet_non_text_minimum`, `::colored_strokes_are_accents_below_minimum`; `akribie-core/src/a11y.rs::colored_strokes_warn_but_ink_does_not` |
 | T5 | SVG válido em `xmllint` + `role`/`title`/`desc` | `xmllint --noout` ok | — | — | — | `akribie-cli/tests/render.rs::svg_goes_to_stdout_with_accessible_marks`; verificado à mão com `xmllint` |
 | T6 | MCP: `tools/list` e `chart_check` inválido | 3 ferramentas; inválido ⇒ `isError: true` com a 1ª linha do diagnóstico; servidor segue atendendo | — | falha de tool é dado; `-32700`/`-32601`/`-32602` para protocolo | — | `akribie-mcp/tests/mcp.rs::tools_list_announces_the_three_tools`, `::invalid_source_is_is_error_and_the_server_stays_alive`, `::malformed_json_is_a_protocol_error_without_killing_the_server`, `::render_png_returns_an_image_content_block`, `::diff_reports_the_label_change` |
-| T7 | `akr prompt` × `docs/usage` em paridade de flags | toda flag de `--help` aparece no guia do verbo; toda flag citada existe em algum verbo | — | — | — | `akribie-cli/tests/docs.rs::help_and_usage_docs_agree_on_flags`, `::every_documented_usage_file_exists` |
+| T7 | `akr prime` × `docs/usage` em paridade de flags | toda flag de `--help` aparece no guia do verbo; toda flag citada existe em algum verbo | — | — | — | `akribie-cli/tests/docs.rs::help_and_usage_docs_agree_on_flags`, `::every_documented_usage_file_exists` |

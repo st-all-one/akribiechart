@@ -10,23 +10,45 @@ triggers:
   - akr
 ---
 
+<!-- akribie:skill:version: 1 -->
+
 # akr — diagramas a partir de texto
 
 Use quando o pedido envolver desenhar/atualizar um diagrama de nós e setas, converter um
-`.excalidraw` para texto, ou comparar duas versões de um diagrama.
+`.excalidraw` para texto, ou comparar duas versões de um diagrama. O binário é offline: nada aqui
+depende de rede em tempo de execução, e SVG/PNG são **derivados** do `.akrc` — nunca os edite.
 
 ## Regra de ouro
 
 **Escreva topologia, não coordenadas.** O layout é calculado. Se você se pegar calculando `x`/`y`,
-pare: declare `node`/`edge` e deixe o `akr` posicionar. Use `at=x,y` só quando o pedido exigir
-posição fixa (e então `layout=free`).
+pare: declare `node`/`edge` e deixe o `akr` posicionar. `at=x,y` fixa um elemento (pinning parcial,
+permitido em qualquer layout); `layout=free` exige `at` em todo nó e nota.
+
+## Superfície
+
+| verbo | para quê |
+|---|---|
+| `akr init [--force]` | cria `akribie.toml`, o bloco em `AGENTS.md` e esta skill (idempotente) |
+| `akr prime [--long]` | gramática compacta; `--long` acrescenta BNF, tabelas de chaves e temas |
+| `akr schema` | JSON com chaves, tipos, defaults, valores fechados, tokens e códigos |
+| `akr check [FILE\|-]` | valida (resolve, layout, contraste); `--strict` promove aviso a erro; `--docs` resolve `doc=` |
+| `akr fmt [FILE\|-]` | forma canônica; `--check` sai 1 quando difere, `--write` grava |
+| `akr render [FILE\|-]` | SVG em stdout, raster com `--out`, ou `--format scene\|excalidraw` |
+| `akr import [FILE\|-]` | `.excalidraw` → `.akrc` canônico (`layout=free`) |
+| `akr diff OLD NEW` | diff semântico por id; exit 1 quando há diferença |
+
+`check`, `fmt`, `render`, `import` e `diff` aceitam `--params '<json>'` (substitui integralmente
+posicionais e flags do verbo), `--json` (envelope `{success,command,data,warnings}`) e, em
+`check`/`render`, `--batch arquivo.jsonl` (uma linha por chart, best-effort, na ordem do arquivo).
+`render` e `diff` aceitam `--at REV` (fonte lida com `git show`, sem tocar a árvore).
 
 ## Ciclo
 
 ```sh
-akr prompt                 # gramática compacta (o mesmo que você precisa saber)
-akr check chart.akrc        # valide ANTES de renderizar
+akr check chart.akrc        # valide ANTES de renderizar; exit 0 quando só há avisos
+akr fmt chart.akrc --write  # forma canônica (o diff do Git fica semântico)
 akr render chart.akrc > chart.svg
+akr render chart.akrc --format png --out chart.png --scale 2
 ```
 
 `akr check` sai 8 quando há erro e imprime `arquivo:linha:col: E0xx nome: mensagem` com `hint:`.
@@ -34,8 +56,29 @@ akr render chart.akrc > chart.svg
 chaves: o conjunto é fechado (`E002`/`E003` listam o válido).
 
 Em um projeto novo, `akr init` instala `akribie.toml`, o bloco de instruções em `AGENTS.md` e esta
-skill em `.agents/skills/akr/SKILL.md` (idempotente). Se o ambiente falar MCP, o servidor
-`akribie-mcp` expõe `chart_check`, `chart_render` e `chart_diff` sem sair do processo.
+skill em `.agents/skills/akr/SKILL.md`. Se o ambiente falar MCP, o servidor `akribie-mcp` expõe
+`chart_check`, `chart_render` e `chart_diff` sem sair do processo.
+
+## Configuração
+
+`akribie.toml` (procurado do diretório do `.akrc` para cima; o primeiro vence) define `layout`,
+`direction`, `theme`, `fontsize`, `pad`, `lang`, `sketch` e `font`. Precedência: opção no `.akrc` >
+arquivo > default do binário. Chaves, valores fechados e defaults: `akr schema`.
+
+## Saída e erros
+
+| exit | significado |
+|---|---|
+| 0 | sucesso (inclui EPIPE em stdout) |
+| 1 | `fmt --check` difere, ou `diff` encontrou mudanças |
+| 2 | uso inválido (flag, formato, stdin ausente, lote vazio) |
+| 3 | arquivo, revisão git ou `--out-dir` inexistente |
+| 5 | falha de leitura/escrita |
+| 8 | `.akrc` inválido (≥1 erro) ou lote 100% falho |
+| 70 | invariante interna quebrada |
+
+`render --format png|jpg|avif` exige `--out` (raster é binário); `--scale` multiplica o `viewBox`
+(default 2). `--dry-run` mede e reporta sem gravar.
 
 ## Escolha do layout
 
@@ -48,20 +91,17 @@ skill em `.agents/skills/akr/SKILL.md` (idempotente). Se o ambiente falar MCP, o
 | lista, passos | `stack` | uma coluna |
 | posição declarada | `free` | exige `at` em todo nó/nota |
 
+Grupos são caixas em volta de membros: o nó declara `in=grupo` (um grupo pode ter `in=pai`).
+
 ## Escolha visual
 
 - `fill` para dar peso: `blue` (primário), `green` (sucesso), `amber` (atenção), `red` (erro),
   `violet` (destaque), `paper` (neutro), `none`.
 - `shape`: `rounded` (default), `rect`, `circle`, `diamond` (decisão), `cloud` (externo/lento),
   `cylinder` (armazenamento), `hexagon`, `note`, `text`.
+- `fillstyle`: `hachure` (default), `solid`, `cross-hatch`, `zigzag`.
 - `style=dashed` para caminho alternativo/assíncrono; `curve=arc` para retorno (backoff, retry).
 - **Sempre** declare o título do `chart`: ele vira `<title>` no SVG (acessibilidade).
-
-## Acessibilidade (não opcional)
-
-O SVG já sai com `role="img"`, `<title>`, `<desc>` com toda a topologia e `aria-label` por elemento.
-Rótulos de aresta são texto, não decoração de cor. Não descreva o diagrama só por cor no texto que
-acompanha o arquivo.
 
 ## Acabamento e fonte
 
@@ -72,6 +112,12 @@ Ambas são chaves de `chart` (ou do `akribie.toml`):
 ```akrc
 chart v1 "Arquitetura" sketch=off font=sans
 ```
+
+## Acessibilidade (não opcional)
+
+O SVG já sai com `role="img"`, `<title>`, `<desc>` com toda a topologia e `aria-label` por elemento.
+Rótulos de aresta são texto, não decoração de cor. Não descreva o diagrama só por cor no texto que
+acompanha o arquivo.
 
 ## Exemplos
 

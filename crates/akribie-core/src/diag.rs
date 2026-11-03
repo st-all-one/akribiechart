@@ -2,7 +2,7 @@
 //!
 //! Um diagnóstico é **dado**, não log: `check` o imprime em `stdout` e o devolve em `--json`. Todo
 //! código é estável, nomeado e documentado aqui — a tabela [`ALL`] alimenta `akr schema` e
-//! `akr prompt`, então código novo entra na tabela, no teste de paridade e na documentação.
+//! `akr prime`, então código novo entra na tabela, no teste de paridade e na documentação.
 
 use crate::span::Span;
 

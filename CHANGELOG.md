@@ -5,7 +5,12 @@ Todas as mudanças notáveis deste projeto são documentadas aqui.
 O formato segue [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e o projeto adere ao
 [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
-## [Não publicado]
+## [0.1.2] - 2026-11-03
+
+### Alterado
+
+- `akr prompt` passa a se chamar `akr prime`; o texto emitido é o mesmo, byte a byte, e o golden
+  acompanha o novo nome.
 
 ### Adicionado
 
@@ -33,7 +38,7 @@ O formato segue [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e o 
 - Léxico e parser do `.akrc` com recuperação por linha: `chart`/`group`/`node`/`edge`/`note`,
   opções `chave=valor` tipadas, strings com escapes, `->`, pares `x,y` e listas de ids.
 - Tabela única de opções (`syntax::option_specs`) que alimenta parser, `akr schema` e, adiante,
-  `akr prompt`.
+  `akr prime`.
 - `akr check [FILE|-] [--json] [--strict] [--params JSON|-]`: diagnósticos
   `arquivo:linha:col: CODE nome: mensagem` com `hint`, exit 8 para erro, 2 para uso inválido,
   3 para arquivo ausente.
@@ -92,7 +97,7 @@ O formato segue [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e o 
 - `--at REV` em `render` e `diff`: lê a fonte pelo `git show` pela porta `Git`, sem tocar a árvore.
 - `akr init`: `akribie.toml`, bloco marcado em `AGENTS.md` e skill com marcador de versão —
   idempotente, com `--force` para a configuração e preservação de arquivo de terceiro.
-- `akr prompt [--long]`: gramática compacta (golden por versão) e, em `--long`, BNF, tabelas de
+- `akr prime [--long]`: gramática compacta (golden por versão) e, em `--long`, BNF, tabelas de
   chaves derivadas de `syntax::option_specs`, tokens de tema e códigos de diagnóstico.
 - `akribie-mcp`: servidor MCP JSON-RPC por stdio com `chart_check`, `chart_render` (texto ou imagem
   base64) e `chart_diff`; falha de execução vira `isError`, o servidor nunca cai por fonte ruim.

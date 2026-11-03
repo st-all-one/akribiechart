@@ -15,8 +15,8 @@ const VERBS: [(&str, &str); 8] = [
     ("render", "03-render.md"),
     ("import", "04-import.md"),
     ("diff", "05-diff.md"),
-    ("init", "06-init-prompt.md"),
-    ("prompt", "06-init-prompt.md"),
+    ("init", "06-init-prime.md"),
+    ("prime", "06-init-prime.md"),
     ("schema", "07-schema.md"),
 ];
 
@@ -58,7 +58,7 @@ fn every_documented_usage_file_exists() {
         "03-render.md",
         "04-import.md",
         "05-diff.md",
-        "06-init-prompt.md",
+        "06-init-prime.md",
         "07-schema.md",
     ] {
         let path = usage_dir().join(verb);

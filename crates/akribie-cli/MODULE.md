@@ -21,7 +21,7 @@ traduz erro em exit code. Nenhuma regra de diagrama mora aqui.
 | `commands/import.rs` | `import` |
 | `commands/diff.rs` | `diff` (par de arquivos e `--at`) |
 | `commands/init.rs` | `init` (config, bloco em `AGENTS.md`, skill), idempotente |
-| `commands/prompt.rs` | `prompt` compacto e `--long` (tabelas derivadas do núcleo) |
+| `commands/prime.rs` | `prime` compacto e `--long` (tabelas derivadas do núcleo) |
 | `commands/schema.rs` | `schema` JSON derivado de `syntax`/`theme`/`diag`/`error` |
 
 Exit codes: 0 ok · 1 `fmt --check`/`diff` · 2 uso · 3 ausente · 5 I/O · 8 schema · 70 interno.

@@ -79,7 +79,7 @@ impl InitOutcome {
             append(&mut text, format_args!("{}: {path}\n", status.label()));
         }
         text.push_str(
-            "próximos: `akr check chart.akrc` e `akr prompt` (gramática para o agente)\n",
+            "próximos: `akr check chart.akrc`, `akr fmt chart.akrc --write` e `akr prime` (gramática)\n",
         );
         text
     }
@@ -171,8 +171,10 @@ fn write_skill(fs: &dyn Fs) -> Result<Status> {
 fn config_text() -> String {
     let mut text = String::from(
         "# akribie.toml — parâmetros do projeto (gerado por `akr init`).\n\
-         # Chaves aceitas: layout, direction, theme, fontsize, pad, lang, sketch, font.\n\
-         # Precedência: opção no `.akrc` > este arquivo > default do binário.\n",
+         # Chaves: layout, direction, theme, fontsize, pad, lang, sketch, font.\n\
+         # Valores válidos e defaults: `akr schema`.\n\
+         # Precedência: opção no `.akrc` > este arquivo > default do binário.\n\
+         # sketch=off + font=sans: traço técnico (linhas exatas) e Liberation Sans.\n",
     );
     // Valores de enum/token/número saem sem aspas (o léxico do `.akrc` é a fonte); só texto puro
     // (`lang`) é string.
@@ -187,55 +189,40 @@ fn config_text() -> String {
     text
 }
 
-/// Corpo do bloco (sem os marcadores) — um parágrafo curto e três comandos.
+/// Corpo do bloco (sem os marcadores): o protocolo de uso completo, em formato de AGENTS.md.
 fn block_between() -> String {
     String::from(
         "## akribie\n\
          \n\
-         Diagramas vivem como `.akrc` versionado; SVG/PNG são derivados e nunca editados à mão.\n\
+         Diagramas são `.akrc` versionados; SVG/PNG/scene/excalidraw são derivados — nunca edite o derivado.\n\
          \n\
-         - `akr check chart.akrc` antes de renderizar (exit 8: corrija só a linha apontada).\n\
-         - `akr render chart.akrc > chart.svg` (raster: `--format png --out chart.png`).\n\
-         - `akr prompt` traz a gramática; `akr schema` traz as chaves e os valores fechados.\n\
+         Fluxo: `akr check chart.akrc` → `akr fmt chart.akrc --write` → `akr render chart.akrc > chart.svg`.\n\
+         - `akr check` sai 8 em erro; corrija **só** a linha `arquivo:linha:col: E0xx … hint:` e reenvie\n\
+         \x20 (`--strict` promove aviso a erro; `--docs` resolve `doc=`).\n\
+         - `akr fmt --check` sai 1 quando a forma canônica difere; `--write` grava.\n\
+         - `akr render --format png|jpg|avif --out chart.png [--scale 2]` (raster exige `--out`).\n\
+         - `akr render --format scene|excalidraw` e `--dry-run` depuram sem escrever.\n\
+         - `akr diff OLD NEW [--json]` mostra `+`/`-`/`~` por id; exit 1 quando há mudança.\n\
+         - `akr check --batch lote.jsonl` e `akr render --batch lote.jsonl --out-dir dist/` processam N charts;\n\
+         \x20 `--params '<json>'` substitui integralmente as flags do verbo.\n\
+         - `akr import desenho.excalidraw > desenho.akrc`; `akr schema` lista chaves e valores fechados;\n\
+         \x20 `akr prime [--long]` é o guia de gramática (BNF, tabelas e temas no `--long`).\n\
+         \n\
+         Configuração: `akribie.toml` (`layout`, `direction`, `theme`, `fontsize`, `pad`, `lang`, `sketch`,\n\
+         `font`); precedência: opção no `.akrc` > arquivo > default. `sketch=off font=sans` = traço técnico.\n\
+         \n\
+         Acessibilidade é requisito: título sempre presente (`<title>`), `<desc>` com a topologia,\n\
+         `aria-label` por elemento, contraste garantido pelos tokens; nunca codifique sentido só por cor.\n\
+         \n\
+         MCP: `akribie-mcp` expõe `chart_check`, `chart_render` e `chart_diff` (JSON-RPC por stdio).\n\
          ",
     )
 }
 
 fn skill_text() -> String {
-    format!(
-        "---\n\
-         name: akr\n\
-         description: Compile, validate, format and compare `.akrc` topology diagrams with the `akr`\n\
-         \x20 binary (accessible SVG, PNG/JPG/AVIF, scene JSON, Excalidraw).\n\
-         ---\n\
-         \n\
-         {SKILL_MARK}\n\
-         \n\
-         # akr — diagrams from text\n\
-         \n\
-         **Write topology, not coordinates.** Declare `node`/`edge`; the layout places them. Use\n\
-         `at=x,y` only when the request demands a fixed position (and then `layout=free`).\n\
-         \n\
-         ```sh\n\
-         akr prompt                  # compact grammar\n\
-         akr check chart.akrc        # validate before rendering\n\
-         akr render chart.akrc > chart.svg\n\
-         ```\n\
-         \n\
-         `akr check` exits 8 on errors and prints `file:line:col: E0xx name: message` with a `hint:`.\n\
-         Fix exactly the reported line and resend; the key set is closed (`E002`/`E003` list it).\n\
-         \n\
-         - Layouts: `flow` (pipeline), `tree` (hierarchy), `mindmap`, `grid`, `stack`, `free`.\n\
-         - Fill tokens: `none`, `paper`, `blue`, `green`, `amber`, `red`, `violet`.\n\
-         - Shapes: `rounded` (default), `rect`, `circle`, `diamond`, `cloud`, `cylinder`,\n\
-         \x20 `hexagon`, `note`, `text`.\n\
-         - Always declare the `chart` title: it becomes the SVG `<title>`.\n\
-         \n\
-         Accessibility is not optional: the SVG ships `role=\"img\"`, `<title>`, `<desc>` and\n\
-         `aria-label` per element; never encode meaning by colour alone.\n\
-         \n\
-         Do not hand-edit SVG/PNG: regenerate from `.akrc`. `akr` is offline; never count on network.\n",
-    )
+    // A skill instalada é o **mesmo** documento versionado na raiz; `include_str!` garante que
+    // `akr init` nunca instale um guia defasado em relação ao `SKILL.md` entregue.
+    include_str!("../../../../SKILL.md").to_string()
 }
 
 #[cfg(test)]

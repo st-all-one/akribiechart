@@ -64,7 +64,7 @@ akr render retry.akrc --format png --out retry.png
 ## Guias por verbo
 
 - [01-check](01-check.md) · [02-fmt](02-fmt.md) · [03-render](03-render.md)
-- [04-import](04-import.md) · [05-diff](05-diff.md) · [06-init-prompt](06-init-prompt.md)
+- [04-import](04-import.md) · [05-diff](05-diff.md) · [06-init-prime](06-init-prime.md)
 - [07-schema](07-schema.md)
 
 Contratos normativos: [GRAMMAR](../specs/GRAMMAR.md), [A11Y](../specs/A11Y.md),

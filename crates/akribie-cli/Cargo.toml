@@ -14,7 +14,7 @@ name = "akr"
 path = "src/main.rs"
 
 [dependencies]
-akribie-core = { path = "../akribie-core", version = "0.1.0" }
+akribie-core = { path = "../akribie-core", version = "0.1.2" }
 clap.workspace = true
 serde.workspace = true
 serde_json.workspace = true

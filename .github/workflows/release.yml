@@ -3,7 +3,7 @@
 # SEM Docker: cada alvo é compilado no runner nativo da sua arquitetura (Linux x86_64,
 # Linux ARM64, macOS arm64 com cross para x86_64, Windows x86_64 com cross para ARM64).
 #
-# Fluxo: `git tag v0.1.0 && git push origin v0.1.0` → verifica versão → compila a matriz →
+# Fluxo: `git tag v0.1.2 && git push origin v0.1.2` → verifica versão → compila a matriz →
 # publica o GitHub Release com os `.tar.gz`/`.zip` + `sha256sums.txt`.
 #
 # Consumido por `install.sh` (asset `akribie-<versão>-<target>.{tar.gz,zip}` + `sha256sums.txt`).

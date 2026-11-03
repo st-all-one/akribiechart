@@ -25,7 +25,7 @@ akr fmt chart.akrc --write      # forma canônica (diff semântico no Git)
 
 ```sh
 akr init                 # akribie.toml + bloco em AGENTS.md + skill em .agents/skills/akr/
-akr prompt               # gramática e regras em texto (--long: BNF + tabelas)
+akr prime                # gramática e regras em texto (--long: BNF + tabelas)
 akr render chart.akrc --format scene | jq .   # geometria para depuração
 ```
 
@@ -40,7 +40,7 @@ curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/st-all-on
 ```
 
 O instalador baixa o pacote do GitHub Release do alvo detectado, confere o SHA-256 e instala `akr`
-e `akribie-mcp` em `~/.local/bin`. Variáveis: `VERSION=v0.1.0`, `INSTALL_DIR=...`,
+e `akribie-mcp` em `~/.local/bin`. Variáveis: `VERSION=v0.1.2`, `INSTALL_DIR=...`,
 `AKR_TARGET=...`, `AKR_NO_PATH=1`. `--from-source` compila do repositório e `--uninstall` move os
 binários para o lixo recuperável.
 

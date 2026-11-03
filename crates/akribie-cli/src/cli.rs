@@ -38,7 +38,7 @@ pub(crate) enum Command {
     /// Instala `akribie.toml`, bloco de instruções em `AGENTS.md` e skill do agente.
     Init(InitArgs),
     /// Imprime a gramática e as regras, prontas para colar em um agente.
-    Prompt(PromptArgs),
+    Prime(PrimeArgs),
 }
 
 /// Argumentos de `akr init`.
@@ -49,9 +49,9 @@ pub(crate) struct InitArgs {
     pub(crate) force: bool,
 }
 
-/// Argumentos de `akr prompt`.
+/// Argumentos de `akr prime`.
 #[derive(Debug, Args)]
-pub(crate) struct PromptArgs {
+pub(crate) struct PrimeArgs {
     /// Anexa BNF completa, tabelas de chaves e tokens de tema.
     #[arg(long)]
     pub(crate) long: bool,

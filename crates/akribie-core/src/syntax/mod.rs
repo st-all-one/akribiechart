@@ -1,7 +1,7 @@
 //! Gramática do `.akrc`: tipos, tabelas de opções e validação de valores.
 //!
 //! As tabelas de [`specs`] são a **única** fonte de chaves, tipos, defaults, faixas e conjuntos
-//! fechados. O parser valida por elas; `akr schema` e `akr prompt` as serializam. Chave nova entra
+//! fechados. O parser valida por elas; `akr schema` e `akr prime` as serializam. Chave nova entra
 //! aqui e aparece nos três consumidores no mesmo passo (ADR-0002).
 
 mod specs;

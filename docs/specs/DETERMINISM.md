@@ -11,7 +11,7 @@ propriedade verificada por teste, não intenção.
 | `scene` JSON | **sim** — byte a byte |
 | `.excalidraw` | **sim** — byte a byte (chaves de ordem fixas) |
 | PNG / JPG / AVIF | determinístico **na versão** (`--scale` fixo, uma thread de codificação); não é contrato entre versões |
-| `akr prompt` | **sim**, por versão (golden) |
+| `akr prime` | **sim**, por versão (golden) |
 | forma canônica (`fmt`) | **sim** — idempotente |
 
 ## Como
@@ -38,7 +38,7 @@ propriedade verificada por teste, não intenção.
 
 - `akribie-core/src/emit/svg/tests.rs::svg_is_byte_identical_for_the_same_scene`
 - `akribie-cli/tests/render.rs::two_renders_are_byte_identical`
-- goldens de `scene`, `fmt` e `prompt` em `crates/akribie-cli/tests/golden/`
+- goldens de `scene`, `fmt` e `prime` em `crates/akribie-cli/tests/golden/`
 - `akribie-core/src/emit/excalidraw/tests.rs::export_is_deterministic`
 
 ## O que muda entre versões

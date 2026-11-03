@@ -70,7 +70,7 @@ cada verbo são validadas na CLI, pela mesma tabela de `--params`.
 |---|---|
 | unidade em `src/*/tests.rs` | estágios isolados com dados puros |
 | integração em `crates/*/tests/` | o binário real, por pipe, com fixtures temporárias |
-| goldens | forma canônica, SVG, `scene`, `prompt` |
+| goldens | forma canônica, SVG, `scene`, `prime` |
 
 Desvios de `cargo deny` são explícitos em `deny.toml` com motivo e rota de saída; o único hoje é
 `paste` (proc-macro do `rav1e`, encoder AVIF), que não entra no binário.

@@ -1,4 +1,4 @@
-# Fase M8 — `init`, `prompt`, MCP e documentação final
+# Fase M8 — `init`, `prime`, MCP e documentação final
 
 **Status:** concluída · **Depende de:** M0–M7
 
@@ -7,12 +7,12 @@
 | peça | responsabilidade |
 |---|---|
 | `commands/init.rs` (+ `init/tests.rs`) | `akribie.toml`, bloco em `AGENTS.md`, skill em `.agents/skills/akr/`, idempotente |
-| `commands/prompt.rs` | `PROMPT_COMPACT` (constante) e `--long` (BNF + tabelas de `option_specs` + temas + códigos) |
+| `commands/prime.rs` | `PRIME_COMPACT` (constante) e `--long` (BNF + tabelas de `option_specs` + temas + códigos) |
 | `akribie-mcp` (`main`, `protocol`, `tools`, `fs`, `base64`) | JSON-RPC 2.0 por stdio com 3 ferramentas |
 | `docs/usage/00…07` | um guia por verbo, com flags reais |
 | `docs/specs/{GRAMMAR,ARCHITECTURE,A11Y,DETERMINISM}.md` | contratos normativos |
 | `crates/*/MODULE.md` | mapa de módulos por crate |
-| `tests/golden/prompt-*.txt` | prompt byte-idêntico por versão |
+| `tests/golden/prime-*.txt` | prime byte-idêntico por versão |
 
 ## Decisões de execução
 
@@ -27,8 +27,8 @@
 - **Saída do `init` é relatório, não silêncio.** Uma linha por arquivo (`novo`, `atualizado`,
   `inalterado`, `preservado`) e `próximos:` com o primeiro comando; sem isso o usuário não distingue
   "não fiz nada" de "não havia o que fazer".
-- **Prompt compacto é constante; o `--long` é derivado.** A parte estável vira golden; as tabelas
-  saem de `syntax::option_specs`, `theme` e `diag` — uma chave nova no núcleo aparece no prompt sem
+- **Prime compacto é constante; o `--long` é derivado.** A parte estável vira golden; as tabelas
+  saem de `syntax::option_specs`, `theme` e `diag` — uma chave nova no núcleo aparece no prime sem
   edição. Faixas abertas (`size`) aparecem como `range=1..`.
 - **MCP trata falha como dado.** Fonte inválida vira `isError: true` com a **primeira linha** do
   diagnóstico em `content[0].text`; o servidor continua atendendo. Só nome de ferramenta
@@ -50,8 +50,8 @@
 |---|---|
 | `akr init` duas vezes | todas as linhas `inalterado`; bloco não duplica; skill não muda |
 | skill de terceiro no caminho | `preservado`, conteúdo intacto |
-| `akr prompt` duas vezes | bytes idênticos; golden confere |
-| `akr prompt --long` | compacto + BNF + tabelas + temas + códigos |
+| `akr prime` duas vezes | bytes idênticos; golden confere |
+| `akr prime --long` | compacto + BNF + tabelas + temas + códigos |
 | `tools/list` | 3 ferramentas |
 | `chart_check` inválido | `isError: true`, `E003` na primeira linha, servidor responde à próxima |
 | `chart_render` PNG | bloco `image/png`, base64 com assinatura `\x89PNG` |
@@ -62,7 +62,7 @@
 |---|---|
 | `akribie-cli/src/commands/init/tests.rs` (5 testes) | criação, idempotência, bloco preservado, skill de terceiro, `--force` |
 | `akribie-cli/tests/init.rs` (2 testes) | processo real, arquivos, config lido pelo `check` |
-| `akribie-cli/tests/prompt.rs` (2 testes) | golden compacto e `--long` |
+| `akribie-cli/tests/prime.rs` (2 testes) | golden compacto e `--long` |
 | `akribie-cli/tests/docs.rs` | paridade ajuda × `docs/usage` |
 | `akribie-mcp/tests/mcp.rs` (5 testes) | `tools/list`, `isError`, JSON malformado, `image`, `diff` |
 | `akribie-mcp/src/base64.rs::tests` | vetores RFC 4648 |

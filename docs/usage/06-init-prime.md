@@ -1,4 +1,4 @@
-# `akr init`, `akr prompt` e o servidor MCP
+# `akr init`, `akr prime` e o servidor MCP
 
 Três entradas para agentes: instalar o projeto, ler a gramática, falar por MCP.
 
@@ -19,16 +19,16 @@ Instala três arquivos, todos idempotentes:
 |---|---|---|
 | `akribie.toml` | `layout = flow`, `direction = lr`, `theme = paper`, `fontsize = 20`, `pad = 32`, `lang = "en"`, `sketch = on`, `font = hand` | existente só muda com `--force` |
 | `AGENTS.md` | bloco entre `<!-- akribie:start -->` e `<!-- akribie:end -->` | substituído no lugar; nunca duplica |
-| `.agents/skills/akr/SKILL.md` | skill com `<!-- akribie:skill:version: 1 -->` | arquivo **sem** o marcador é preservado |
+| `.agents/skills/akr/SKILL.md` | cópia verbatim de `SKILL.md` (com `<!-- akribie:skill:version: 1 -->`) | arquivo **sem** o marcador é preservado |
 
 A saída diz o que aconteceu com cada arquivo — `novo`, `atualizado`, `inalterado`, `preservado` — e
 termina em `próximos:` com o primeiro comando a rodar.
 
-## `akr prompt`
+## `akr prime`
 
 ```sh
-akr prompt            # compacto: gramática, conjuntos, 2 exemplos, regras
-akr prompt --long     # + BNF, tabelas de chaves por statement e tokens de tema
+akr prime            # compacto: gramática, conjuntos, 2 exemplos, regras
+akr prime --long     # + BNF, tabelas de chaves por statement e tokens de tema
 ```
 
 | flag | efeito |

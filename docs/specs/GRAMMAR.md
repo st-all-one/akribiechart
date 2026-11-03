@@ -32,7 +32,7 @@ list   = ident { "," ident } ;
 - `number` — inteiro ou decimal com ponto; `-` permitido; não-finitos são rejeitados.
 - Chaves são **fechadas**: chave desconhecida é `E002`, valor fora do conjunto é `E003` (com a lista
   do válido no `hint`). A fonte única da tabela é `syntax::option_specs`; `akr schema` e
-  `akr prompt --long` derivam dela.
+  `akr prime --long` derivam dela.
 
 ## Chaves
 
@@ -89,4 +89,4 @@ Faixas: `fontsize` ∈ [14, 96] (20); `pad` ∈ [0, 256] (32); `width` ∈ [2, 6
 | `W007` | contraste abaixo do mínimo |
 
 `E00x` ⇒ exit 8; `W00x` ⇒ exit 0 (8 sob `--strict`). `akr schema` lista os códigos com nome e
-gravidade; `akr prompt --long` os lista em texto.
+gravidade; `akr prime --long` os lista em texto.

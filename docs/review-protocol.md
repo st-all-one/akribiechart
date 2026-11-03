@@ -47,20 +47,20 @@ make ci        # check + deny + typos   (quando deny/typos instalados)
 Nenhum `#[allow]` sem `reason = "..."`. Nenhum arquivo de produção acima de 300 linhas. Nenhuma
 dependência fora da tabela do ADR-0001 §5.1.
 
-## 4. Paridade entre o prompt vivo e a documentação estática
+## 4. Paridade entre o prime vivo e a documentação estática
 
-`akr prompt` é a superfície que um agente lê em tempo de execução; `docs/` é a que um humano lê. As
+`akr prime` é a superfície que um agente lê em tempo de execução; `docs/` é a que um humano lê. As
 duas descrevem o mesmo contrato e precisam concordar. A revisão verifica, mecanicamente:
 
 ```sh
-akr prompt > /tmp/prompt.txt
-grep -o -- '--[a-z-]*' /tmp/prompt.txt | sort -u          # flags citadas no prompt
+akr prime > /tmp/prime.txt
+grep -o -- '--[a-z-]*' /tmp/prime.txt | sort -u          # flags citadas no prime
 grep -o -- '--[a-z-]*' docs/usage/*.md | sort -u          # flags citadas nos guias
 ```
 
 Toda flag citada em um lado precisa existir do outro. O mesmo vale para códigos de diagnóstico
-(`E00x`/`W00x`) e exit codes. `akr prompt` é byte-idêntico por versão do binário (golden em
-`crates/akribie-cli/tests/golden/prompt*.txt`).
+(`E00x`/`W00x`) e exit codes. `akr prime` é byte-idêntico por versão do binário (golden em
+`crates/akribie-cli/tests/golden/prime*.txt`).
 
 ## 5. Determinismo na revisão
 

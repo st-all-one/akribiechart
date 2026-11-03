@@ -10,7 +10,7 @@ checksum = "320119579fcad9c21884f5c4861d16174d0e06250625266f50fe6898340abefa"
 
 [[package]]
 name = "akribie-cli"
-version = "0.1.0"
+version = "0.1.2"
 dependencies = [
  "akribie-core",
  "clap",
@@ -20,7 +20,7 @@ dependencies = [
 
 [[package]]
 name = "akribie-core"
-version = "0.1.0"
+version = "0.1.2"
 dependencies = [
  "dugong",
  "harfrust 0.15.0",
@@ -36,7 +36,7 @@ dependencies = [
 
 [[package]]
 name = "akribie-mcp"
-version = "0.1.0"
+version = "0.1.2"
 dependencies = [
  "akribie-core",
  "serde",

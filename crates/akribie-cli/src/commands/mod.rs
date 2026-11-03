@@ -6,7 +6,7 @@ pub(crate) mod fmt;
 pub(crate) mod format;
 pub(crate) mod import;
 pub(crate) mod init;
-pub(crate) mod prompt;
+pub(crate) mod prime;
 pub(crate) mod render;
 pub(crate) mod schema;
 

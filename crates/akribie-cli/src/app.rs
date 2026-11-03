@@ -9,7 +9,7 @@ use self::emit::{
 
 use crate::adapters::{StdFs, StdGit};
 use crate::cli::{
-    CheckArgs, Cli, Command, DiffArgs, FmtArgs, ImportArgs, InitArgs, PromptArgs, RenderArgs,
+    CheckArgs, Cli, Command, DiffArgs, FmtArgs, ImportArgs, InitArgs, PrimeArgs, RenderArgs,
 };
 use crate::commands;
 use crate::output;
@@ -24,7 +24,7 @@ pub(crate) fn run(cli: Cli) -> ExitCode {
         Command::Diff(args) => diff(&args),
         Command::Import(args) => import(&args),
         Command::Init(args) => init(&args),
-        Command::Prompt(args) => prompt(&args),
+        Command::Prime(args) => prime(&args),
     }
 }
 fn import(args: &ImportArgs) -> ExitCode {
@@ -111,11 +111,11 @@ fn init(args: &InitArgs) -> ExitCode {
     }
 }
 
-fn prompt(args: &PromptArgs) -> ExitCode {
+fn prime(args: &PrimeArgs) -> ExitCode {
     let length = if args.long {
-        commands::prompt::Length::Long
+        commands::prime::Length::Long
     } else {
-        commands::prompt::Length::Compact
+        commands::prime::Length::Compact
     };
-    emit_text(&commands::prompt::render(length), 0, "prompt")
+    emit_text(&commands::prime::render(length), 0, "prime")
 }

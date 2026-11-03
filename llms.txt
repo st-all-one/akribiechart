@@ -20,7 +20,7 @@
 
 - `akr init` — cria `akribie.toml`, bloco em `AGENTS.md` e skill em `.agents/skills/akr/`
   (idempotente; `--force` reescreve a config).
-- `akr prompt [--long]` — gramática e regras em texto, para colar em um agente.
+- `akr prime [--long]` — gramática e regras em texto, para colar em um agente.
 - `akr check [FILE|-] [--strict] [--docs] [--batch FILE|-] [--json]` — valida e diagnostica.
 - `akr fmt [FILE|-] [--write|--check]` — forma canônica.
 - `akr render [FILE|-] [--format svg|png|jpg|avif|scene|excalidraw] [--out PATH] [--scale N]`.
@@ -59,4 +59,4 @@ note   "Texto" [fill=amber] [at=x,y] [size=w,h] [near=ID]
 - [Arquitetura](docs/specs/ARCHITECTURE.md): módulos e portas.
 - [Matriz de aceitação](docs/plan/02-matriz-aceitacao.md): definição de pronto por verbo.
 - [Uso por verbo](docs/usage/00-quickstart.md): quickstart; 01-check, 02-fmt, 03-render,
-  04-import, 05-diff, 06-init-prompt (inclui MCP), 07-schema.
+  04-import, 05-diff, 06-init-prime (inclui MCP), 07-schema.
