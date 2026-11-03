@@ -91,3 +91,12 @@ fn safe_box_corners_stay_inside_the_shape() {
         }
     }
 }
+
+#[test]
+fn label_that_fits_exactly_stays_on_one_line() {
+    use super::tests::placed;
+
+    let placed = placed("chart v1 \"x\" font=sans sketch=off\nnode a \"Auth / OIDC\"\n");
+    let node = placed.nodes.first().expect("nó");
+    assert_eq!(node.label, ["Auth / OIDC"]);
+}

@@ -122,3 +122,6 @@ O formato segue [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e o 
 - O cilindro desenhava a tampa duas vezes (aba no topo) e a nuvem ultrapassava o retângulo do nó.
 - A elipse à mão usava os controles cúbicos uma casa à frente e desenhava um asterisco no lugar do
   círculo; os controles agora seguem a ordem `direita → baixo → esquerda → topo`.
+- Rótulo que cabia exatamente na caixa segura era quebrado em duas linhas pelo arredondamento do
+  `f32` entre `node_box` e `text_box` (ex.: `Auth / OIDC` em `font=sans`); a quebra ganhou uma
+  tolerância de 0,05 px.

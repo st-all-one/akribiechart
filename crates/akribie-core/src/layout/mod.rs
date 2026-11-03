@@ -184,7 +184,9 @@ fn label_lines(
     gauge: &Gauge,
 ) -> Vec<String> {
     let usable = text_box(shape, Rect::new(0.0, 0.0, size.0, size.1)).w;
-    gauge.wrap(label, fontsize, usable)
+    // O tamanho do nó soma `NODE_PADDING` e a caixa segura o subtrai; o arredondamento do `f32`
+    // pode devolver um fio menos que a largura medida e quebrar um rótulo que cabia exatamente.
+    gauge.wrap(label, fontsize, usable + 0.05)
 }
 
 /// Flags de seta a partir dos `Head` do modelo.
