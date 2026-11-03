@@ -48,7 +48,7 @@ pub fn excalidraw(chart: &Chart, placed: &Placed) -> String {
         "appState": { "gridSize": null, "viewBackgroundColor": theme.canvas },
         "elements": elements,
         "files": {},
-        "source": "https://github.com/st-all-one/akribie",
+        "source": "https://github.com/st-all-one/akribiechart",
         "type": "excalidraw",
         "version": 2,
     });

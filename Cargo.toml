@@ -13,8 +13,8 @@ edition = "2024"
 rust-version = "1.99"
 license = "MIT OR Apache-2.0"
 publish = false
-repository = "https://github.com/st-all-one/akribie"
-homepage = "https://github.com/st-all-one/akribie"
+repository = "https://github.com/st-all-one/akribiechart"
+homepage = "https://github.com/st-all-one/akribiechart"
 
 [workspace.dependencies]
 # core (puro)

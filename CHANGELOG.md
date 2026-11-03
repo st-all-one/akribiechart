@@ -5,6 +5,15 @@ Todas as mudanças notáveis deste projeto são documentadas aqui.
 O formato segue [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e o projeto adere ao
 [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
+## [Não publicado]
+
+### Corrigido
+
+- `install.sh`, o README e a documentação apontam para `st-all-one/akribiechart`; o caminho
+  `st-all-one/akribie` não existe e o `curl` de instalação retornava 404.
+- `akr render --format excalidraw` emite `"source": "https://github.com/st-all-one/akribiechart"`
+  (os bytes do `.excalidraw` mudam).
+
 ## [0.1.2] - 2026-11-03
 
 ### Alterado

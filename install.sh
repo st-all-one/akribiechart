@@ -15,7 +15,7 @@
 # recuperável em ${XDG_CACHE_HOME:-~/.cache}/akribie/trash (invalida o caminho original).
 #
 # Uso:
-#   curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/st-all-one/akribie/main/install.sh | bash
+#   curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/st-all-one/akribiechart/main/install.sh | bash
 #   curl ... | VERSION=v0.1.2 bash
 #   curl ... | INSTALL_DIR=/usr/local/bin bash
 #   ./install.sh --from-source
@@ -25,7 +25,7 @@
 #   VERSION             tag a instalar (default: latest)
 #   INSTALL_DIR         diretório de destino (default: ~/.local/bin)
 #   AKR_TARGET          sobrescreve o target triple detectado
-#   AKR_REPO            owner/repo do GitHub (default: st-all-one/akribie; útil para testar)
+#   AKR_REPO            owner/repo do GitHub (default: st-all-one/akribiechart; útil para testar)
 #   AKR_BASE_URL        base URL para download (default: https://github.com; útil para testar)
 #   AKR_CACHE_DIR       raiz de cache/lixo (default: ${XDG_CACHE_HOME:-~/.cache}/akribie)
 #   AKR_NO_PATH=1       não edita os rc files (PATH)
@@ -36,7 +36,7 @@ if [ -z "${BASH_VERSION:-}" ]; then
     exit 1
 fi
 
-REPO="${AKR_REPO:-st-all-one/akribie}"
+REPO="${AKR_REPO:-st-all-one/akribiechart}"
 BASE_URL_ROOT="${AKR_BASE_URL:-https://github.com}"
 CACHE_ROOT="${AKR_CACHE_DIR:-${XDG_CACHE_HOME:-${HOME}/.cache}/akribie}"
 BINARIES=(akr akribie-mcp)

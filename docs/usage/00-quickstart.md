@@ -6,7 +6,7 @@ geometria, cor, texto alternativo e bytes são derivados. Nada de rede em tempo 
 ## Instalar
 
 ```sh
-curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/st-all-one/akribie/main/install.sh | bash
+curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/st-all-one/akribiechart/main/install.sh | bash
 ```
 
 Do source: `make release && make install` instala `akr` e `akribie-mcp` em `~/.local/bin`. O
