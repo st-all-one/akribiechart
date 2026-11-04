@@ -1,14 +1,19 @@
 [workspace]
 # Edition 2024 usa resolver v3 por padrão (MSRV-aware); declarado para ficar explícito (ADR-0001).
 resolver = "3"
-members = ["crates/akribie-core", "crates/akribie-cli", "crates/akribie-mcp"]
+members = [
+    "crates/akribie-core",
+    "crates/akribie-adapters",
+    "crates/akribie-cli",
+    "crates/akribie-mcp",
+]
 # `xtask` é ferramenta de build com lock próprio (woff2 fixa `bytes =1.9.0`); fora do
 # lockfile publicado para não contaminar a superfície de dependências do produto (ADR-0001 §5.1).
 exclude = ["xtask"]
 default-members = ["crates/akribie-cli"]
 
 [workspace.package]
-version = "0.1.2"
+version = "0.1.3"
 edition = "2024"
 rust-version = "1.99"
 license = "MIT OR Apache-2.0"

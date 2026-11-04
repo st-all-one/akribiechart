@@ -2,7 +2,8 @@
 
 mod common;
 
-use common::{git, run, run_in, temp_dir, temp_file};
+use common::{git, read_golden, run, run_in, temp_dir, temp_file};
+use std::path::Path;
 
 fn png_width(bytes: &[u8]) -> Option<u32> {
     let header: [u8; 4] = bytes.get(16..20)?.try_into().ok()?;
@@ -415,8 +416,21 @@ fn clean_finish_and_sans_font_reach_the_svg() {
 }
 
 #[test]
-fn hand_finish_keeps_the_default_stack() {
+fn default_finish_is_technical_and_sans() {
     let source = "chart v1 \"T\"\nnode a \"A\"\nnode b \"B\"\nedge a -> b \"x\"\n";
+    let run = run(&["render"], Some(source));
+    assert!(
+        run.stdout
+            .contains("font-family=\"Liberation Sans, Arial, Helvetica, sans-serif\"")
+    );
+    let block = element_block(&run.stdout, "a");
+    assert_eq!(block.matches('M').count(), 1, "traço técnico: {block}");
+}
+
+#[test]
+fn hand_finish_is_opt_in() {
+    let source =
+        "chart v1 \"T\" sketch=on font=hand\nnode a \"A\"\nnode b \"B\"\nedge a -> b \"x\"\n";
     let run = run(&["render"], Some(source));
     assert!(
         run.stdout
@@ -453,4 +467,52 @@ fn project_config_sets_finish_and_font() {
     assert!(run.stdout.contains("Liberation Sans"));
     let block = element_block(&run.stdout, "a");
     assert_eq!(block.matches('M').count(), 1, "{block}");
+}
+
+#[test]
+fn real_world_diagrams_match_goldens() {
+    for name in [
+        "anatomia-modulo",
+        "boot-descoberta",
+        "pipeline-cms-rbac",
+        "topologia-runtime",
+    ] {
+        let path = Path::new(env!("CARGO_MANIFEST_DIR"))
+            .join("../../fixtures/reais")
+            .join(format!("{name}.akrc"));
+        let path = path.to_str().expect("utf8");
+        let run = run(&["render", path, "--format", "svg"], None);
+        assert_eq!(run.code, 0, "{name}: {}", run.stderr);
+        assert_eq!(
+            run.stdout,
+            read_golden(&format!("reais/{name}.svg")),
+            "{name}"
+        );
+    }
+}
+
+#[test]
+fn params_choose_input_and_output() {
+    let out = temp_file("params-out.svg", "");
+    let params = serde_json::json!({
+        "source": SAMPLE,
+        "format": "svg",
+        "out": out.to_str().expect("utf8"),
+    })
+    .to_string();
+    let rendered = run(&["render", "--params", &params], None);
+    assert_eq!(rendered.code, 0, "stderr: {}", rendered.stderr);
+    assert_eq!(
+        rendered.stdout, "",
+        "com `out` o SVG vai para o arquivo, não para o stdout"
+    );
+    let written = std::fs::read_to_string(&out).expect("lê svg");
+    assert!(written.starts_with("<svg "), "{written}");
+
+    let path = temp_file("params-conflict.akrc", SAMPLE);
+    let conflict = run(
+        &["render", path.to_str().expect("utf8"), "--params", &params],
+        None,
+    );
+    assert_eq!(conflict.code, 2, "stderr: {}", conflict.stderr);
 }

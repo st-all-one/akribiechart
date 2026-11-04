@@ -44,9 +44,10 @@ fn bumpy_closed(points: &[Point], bulge: f32) -> String {
     };
     let mut path = moveto(first);
     for index in 0..count {
+        let next = index.saturating_add(1).checked_rem(count);
         let (Some(from), Some(to)) = (
             points.get(index).copied(),
-            points.get((index + 1) % count).copied(),
+            next.and_then(|next| points.get(next)).copied(),
         ) else {
             continue;
         };

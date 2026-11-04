@@ -17,7 +17,7 @@ Instala três arquivos, todos idempotentes:
 
 | arquivo | conteúdo | regra |
 |---|---|---|
-| `akribie.toml` | `layout = flow`, `direction = lr`, `theme = paper`, `fontsize = 20`, `pad = 32`, `lang = "en"`, `sketch = on`, `font = hand` | existente só muda com `--force` |
+| `akribie.toml` | `layout = flow`, `direction = lr`, `theme = paper`, `fontsize = 20`, `pad = 32`, `lang = "pt-BR"`, `sketch = off`, `font = sans` | existente só muda com `--force` |
 | `AGENTS.md` | bloco entre `<!-- akribie:start -->` e `<!-- akribie:end -->` | substituído no lugar; nunca duplica |
 | `.agents/skills/akr/SKILL.md` | cópia verbatim de `SKILL.md` (com `<!-- akribie:skill:version: 1 -->`) | arquivo **sem** o marcador é preservado |
 

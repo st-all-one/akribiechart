@@ -16,14 +16,20 @@ pub(super) fn paint_group(
     ink: Ink,
 ) -> GroupDraw {
     let d = sketch::rect(group.rect, 0.0, ink);
-    let label = TextRun {
-        text: group.label.clone(),
-        x: group.rect.x + text::NODE_PADDING,
-        y: group.rect.y + fontsize * text::LINE_HEIGHT * 0.5,
-        size: fontsize,
-        color: theme.ink,
-        anchor: Anchor::Start,
-    };
+    let line_height = fontsize * text::LINE_HEIGHT;
+    let label = group
+        .label_lines
+        .iter()
+        .enumerate()
+        .map(|(index, line)| TextRun {
+            text: line.clone(),
+            x: group.rect.x + text::NODE_PADDING,
+            y: group.rect.y + line_height * (f32::from(u16::try_from(index).unwrap_or(0)) + 0.5),
+            size: fontsize,
+            color: theme.ink,
+            anchor: Anchor::Start,
+        })
+        .collect();
     GroupDraw {
         id: group.id.clone(),
         aria_label: aria_of(std::slice::from_ref(&group.label)),
@@ -33,7 +39,7 @@ pub(super) fn paint_group(
             width: group.width,
             dash: dash_of(group.style),
         },
-        label: Some(label),
+        label,
     }
 }
 

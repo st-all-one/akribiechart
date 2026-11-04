@@ -6,6 +6,11 @@
 //! - grupos `groups`, `edges`, `nodes`, `notes` nesta ordem, cada figura com `data-id`/`data-kind`;
 //! - todo número passa por [`num`] (duas casas, sem zeros) e todo texto por [`escape`];
 //! - mesma `Scene` ⇒ mesmos bytes (nenhuma ordenação instável, nenhum `HashMap`).
+//!
+//! A serialização acumula linhas num `Vec<String>` e fecha com `join("\n")`. A alternativa —
+//! escrever direto num `String` pré-dimensionado — foi medida e empatou (a emissão é dezenas de
+//! microssegundos dentro de uma execução de ~3 ms, dominada por inicialização e rasterização):
+//! ficou a versão mais simples de ler, porque o ganho não pagava a mudança.
 
 use crate::num::format as num;
 use crate::paint::{Anchor, EdgeDraw, GroupDraw, NodeDraw, NoteDraw, Scene, Stroke, TextRun};
@@ -119,8 +124,8 @@ fn node_element(node: &NodeDraw, stack: &str) -> String {
 fn group_element(group: &GroupDraw, stack: &str) -> String {
     let mut parts: Vec<String> = Vec::new();
     parts.push(stroke_element(&group.stroke));
-    if let Some(label) = &group.label {
-        parts.push(text_element(label, stack));
+    for run in &group.label {
+        parts.push(text_element(run, stack));
     }
     wrap(&group.id, "group", group.aria_label.as_deref(), &parts)
 }
@@ -159,7 +164,9 @@ fn edge_element(edge: &EdgeDraw, theme: &Theme, stack: &str) -> String {
             num(label.rect.h),
             theme.canvas
         ));
-        parts.push(text_element(&label.text, stack));
+        for run in &label.text {
+            parts.push(text_element(run, stack));
+        }
     }
     wrap(&edge.id, "edge", edge.aria_label.as_deref(), &parts)
 }

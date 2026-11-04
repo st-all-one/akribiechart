@@ -75,7 +75,7 @@ impl Tree<'_> {
         let mut sum = 0.0_f32;
         let mut count = 0.0_f32;
         for child in children {
-            self.place(child, level + 1, placed);
+            self.place(child, level.saturating_add(1), placed);
             if let Some(center) = self.center.get(child) {
                 sum += *center;
                 count += 1.0;
@@ -103,7 +103,7 @@ impl Tree<'_> {
 
     fn rects(&self, count: usize) -> Vec<Rect> {
         let max_depth = self.depth.iter().copied().max().unwrap_or(0);
-        let mut row_extent = vec![0.0_f32; max_depth + 1];
+        let mut row_extent = vec![0.0_f32; max_depth.saturating_add(1)];
         for index in 0..count {
             if let Some(depth) = self.depth.get(index)
                 && let Some(slot) = row_extent.get_mut(*depth)
@@ -111,10 +111,11 @@ impl Tree<'_> {
                 *slot = slot.max(self.cross_extent(index));
             }
         }
-        let mut row_offset = vec![0.0_f32; max_depth + 1];
+        let mut row_offset = vec![0.0_f32; max_depth.saturating_add(1)];
         for level in 1..=max_depth {
-            let previous = row_offset.get(level - 1).copied().unwrap_or(0.0)
-                + row_extent.get(level - 1).copied().unwrap_or(0.0);
+            let above = level.saturating_sub(1);
+            let previous = row_offset.get(above).copied().unwrap_or(0.0)
+                + row_extent.get(above).copied().unwrap_or(0.0);
             if let Some(slot) = row_offset.get_mut(level) {
                 *slot = previous + V_GAP;
             }

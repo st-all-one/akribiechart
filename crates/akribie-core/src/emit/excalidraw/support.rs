@@ -29,8 +29,12 @@ pub(super) fn index_key(position: usize) -> String {
     let mut digits = [b'0'; 4];
     let mut rest = position;
     for slot in digits.iter_mut().rev() {
-        *slot = BASE62.get(rest % BASE62.len()).copied().unwrap_or(b'0');
-        rest /= BASE62.len();
+        let radix = BASE62.len();
+        *slot = BASE62
+            .get(rest.checked_rem(radix).unwrap_or(0))
+            .copied()
+            .unwrap_or(b'0');
+        rest = rest.checked_div(radix).unwrap_or(0);
     }
     format!("a{}V", String::from_utf8_lossy(&digits))
 }

@@ -89,8 +89,8 @@ disallowed-types = [
 ]
 
 disallowed-methods = [
-  { path = "std::env::var", reason = "não determinístico; use a porta Env (ADR-0001 §2)" },
-  { path = "std::env::vars", reason = "não determinístico; use a porta Env (ADR-0001 §2)" },
+  { path = "std::env::var", reason = "não determinístico; o domínio não lê ambiente (ADR-0006 §3)" },
+  { path = "std::env::vars", reason = "não determinístico; o domínio não lê ambiente (ADR-0006 §3)" },
   { path = "std::time::SystemTime::now", reason = "não determinístico; o scene não carrega tempo (ADR-0001 §2)" },
   { path = "std::time::Instant::now", reason = "não determinístico (ADR-0001 §2)" },
   { path = "std::process::exit", reason = "propague Result; exit codes vivem na CLI" },

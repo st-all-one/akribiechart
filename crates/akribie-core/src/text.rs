@@ -4,9 +4,9 @@
 //! isso as fontes são **embutidas** e versionadas (`assets/FONT.lock`), e o shaping usa o Hárfbuzz
 //! portátil do `harfrust` — métricas idênticas em qualquer máquina.
 //!
-//! `font=hand` (padrão) mede e desenha com a Excalifont; `font=sans` usa a Liberation Sans. As duas
-//! faces vivem no mesmo [`Font`]: `check` audita glifos da família escolhida e a rasterização
-//! registra ambas no `usvg`.
+//! `font=sans` (padrão) mede e desenha com a Liberation Sans; `font=hand` (opcional) usa a
+//! Excalifont. As duas faces vivem no mesmo [`Font`]: `check` audita glifos da família escolhida e a
+//! rasterização registra ambas no `usvg`.
 
 use harfrust::{Buffer, Font as Face, ShapeOptions, ShaperFont};
 use unicode_segmentation::UnicodeSegmentation;

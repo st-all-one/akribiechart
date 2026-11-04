@@ -95,9 +95,9 @@ const CHART: &[OptSpec] = &[
     enumeration("theme", "paper", THEMES),
     ranged("fontsize", "20", 14.0, 96.0),
     ranged("pad", "32", 0.0, 256.0),
-    worded("lang", "en"),
-    enumeration("sketch", "on", SKETCHES),
-    enumeration("font", "hand", FONTS),
+    worded("lang", "pt-BR"),
+    enumeration("sketch", "off", SKETCHES),
+    enumeration("font", "sans", FONTS),
     plain("doc", ValKind::Str),
 ];
 

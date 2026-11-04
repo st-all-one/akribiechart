@@ -7,12 +7,12 @@ use self::emit::{
     Mode, emit_diff, emit_fmt, emit_import, emit_outcome, emit_render, emit_text, fail,
 };
 
-use crate::adapters::{StdFs, StdGit};
 use crate::cli::{
     CheckArgs, Cli, Command, DiffArgs, FmtArgs, ImportArgs, InitArgs, PrimeArgs, RenderArgs,
 };
 use crate::commands;
 use crate::output;
+use akribie_adapters::{StdFs, StdGit};
 use std::process::ExitCode;
 
 pub(crate) fn run(cli: Cli) -> ExitCode {

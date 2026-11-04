@@ -11,6 +11,10 @@ mod flow;
 mod free;
 mod grid;
 mod inset;
+mod labels;
+mod notes;
+#[cfg(test)]
+mod overlap_tests;
 mod radial;
 #[cfg(test)]
 mod tests;
@@ -62,6 +66,10 @@ pub struct PlacedEdge {
     pub label: Option<String>,
     /// Onde o rótulo é desenhado (meio da rota).
     pub label_at: Point,
+    /// Caixa do fundo do rótulo (colisão já resolvida), quando há rótulo.
+    pub label_rect: Option<Rect>,
+    /// Rótulo já quebrado na largura máxima.
+    pub label_lines: Vec<String>,
     /// Rota, do contorno de origem ao contorno de destino.
     pub route: Vec<Point>,
     /// Ponta com seta na chegada.
@@ -87,6 +95,8 @@ pub struct PlacedGroup {
     pub rect: Rect,
     /// Rótulo.
     pub label: String,
+    /// Rótulo já quebrado na largura do grupo.
+    pub label_lines: Vec<String>,
     /// Contorno.
     pub stroke: Token,
     /// Estilo do traço.
@@ -140,8 +150,9 @@ impl Placed {
 pub fn layout(chart: &Chart, font: &Font) -> Placed {
     let gauge = font.gauge(chart.font);
     let sizes = node_sizes(chart, gauge);
+    let labels = labels::edge_sizes(chart, gauge);
     let mut rects = match chart.layout {
-        Layout::Flow => flow::run(chart, &sizes),
+        Layout::Flow => flow::run(chart, &sizes, &labels),
         Layout::Tree => tree::run(chart, &sizes),
         Layout::Mindmap => radial::run(chart, &sizes),
         Layout::Grid | Layout::Stack => grid::run(&sizes, chart.layout),

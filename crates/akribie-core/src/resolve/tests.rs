@@ -169,6 +169,6 @@ fn sketch_and_font_follow_the_chart_then_the_config() {
     assert!(chart.sketch);
     assert_eq!(chart.font, FontFamily::Hand);
     let (chart, _) = chart_of("chart v1 \"x\"\n");
-    assert!(chart.sketch, "o padrão é traço à mão");
-    assert_eq!(chart.font, FontFamily::Hand);
+    assert!(!chart.sketch, "o padrão é traço técnico");
+    assert_eq!(chart.font, FontFamily::Sans);
 }

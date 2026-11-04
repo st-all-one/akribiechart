@@ -2,3 +2,7 @@
 /fixtures/out
 **/*.rs.bk
 /dist
+# `xtask` é ferramenta de build fora do workspace: lock e target locais, nunca versionados
+# (o lock próprio existe para isolar `woff2`/`bytes` da superfície de dependências — ADR-0001 §5.1).
+/xtask/target
+/xtask/Cargo.lock

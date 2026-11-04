@@ -1,12 +1,14 @@
-//! Adaptador de `Fs` para o servidor MCP (mesma semântica do adaptador da CLI).
+//! Adaptador de [`Fs`] sobre o sistema de arquivos real.
 
 use std::path::Path;
 
-use akribie_core::error::{Error, Result};
+use akribie_core::error::Result;
 use akribie_core::ports::Fs;
 
+use crate::io_error;
+
 /// Sistema de arquivos real.
-pub(crate) struct StdFs;
+pub struct StdFs;
 
 impl Fs for StdFs {
     fn read(&self, path: &Path) -> Result<String> {
@@ -29,13 +31,5 @@ impl Fs for StdFs {
 
     fn exists(&self, path: &Path) -> bool {
         path.exists()
-    }
-}
-
-fn io_error(path: &Path, error: &std::io::Error) -> Error {
-    if error.kind() == std::io::ErrorKind::NotFound {
-        Error::not_found(format!("arquivo não encontrado: {}", path.display()))
-    } else {
-        Error::io(format!("falha em `{}`: {error}", path.display()))
     }
 }

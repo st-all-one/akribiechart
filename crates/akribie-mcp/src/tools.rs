@@ -16,7 +16,7 @@ use akribie_core::ports::Fs as _;
 use akribie_core::text::Font;
 use serde_json::{Value, json};
 
-use crate::fs::StdFs;
+use akribie_adapters::StdFs;
 
 mod run;
 

@@ -41,7 +41,7 @@ pub(crate) fn emit_text(text: &str, code: u8, command: &'static str) -> ExitCode
 /// `check`: diagnósticos (texto) ou envelope com contagem.
 pub(crate) fn emit_outcome(outcome: &CheckOutcome, mode: Mode) -> Result<u8> {
     let failed = outcome.failed();
-    let code = u8::from(failed) * 8;
+    let code = u8::from(failed).saturating_mul(8);
     if let Mode::Json = mode {
         if failed {
             let message = format!("{} (ver diagnósticos)", outcome.summary());

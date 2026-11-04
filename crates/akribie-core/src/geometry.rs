@@ -73,6 +73,14 @@ impl Rect {
             && point.1 >= self.y
             && point.1 <= self.bottom()
     }
+
+    /// `true` quando os dois retângulos se sobrepõem (encostar na borda não conta).
+    pub fn intersects(&self, other: Self) -> bool {
+        self.x < other.right()
+            && other.x < self.right()
+            && self.y < other.bottom()
+            && other.y < self.bottom()
+    }
 }
 
 /// Ponto onde o raio de `center` até `toward` cruza o contorno da forma.
@@ -101,6 +109,14 @@ pub fn outline_hit(rect: Rect, shape: Shape, toward: Point) -> Point {
 /// É o que ancora rótulos de aresta: em rota de dois pontos dá o meio exato; numa curva amostrada
 /// dá o ponto a meio caminho — nunca o fim da rota, como acontecia ao indexar `len / 2`.
 pub fn route_midpoint(route: &[Point]) -> Option<(Point, Point)> {
+    route_point_at(route, 0.5)
+}
+
+/// Ponto a `fraction` do comprimento de arco, com a direção local (unitária).
+///
+/// `fraction` é presa ao intervalo `[0, 1]`: `0` devolve o início da rota e `1` o fim. É o que
+/// permite ao layout de rótulos procurar, ao longo do próprio traço, uma posição sem colisão.
+pub fn route_point_at(route: &[Point], fraction: f32) -> Option<(Point, Point)> {
     let mut total = 0.0_f32;
     for pair in route.windows(2) {
         let (from, to) = (pair.first()?, pair.get(1)?);
@@ -110,7 +126,7 @@ pub fn route_midpoint(route: &[Point]) -> Option<(Point, Point)> {
     if total <= f32::EPSILON {
         return Some((first, (1.0, 0.0)));
     }
-    let half = total * 0.5;
+    let half = total * fraction.clamp(0.0, 1.0);
     let mut walked = 0.0_f32;
     for pair in route.windows(2) {
         let (from, to) = (pair.first()?, pair.get(1)?);

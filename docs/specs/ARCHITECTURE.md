@@ -16,11 +16,12 @@ externo atravessa as portas de `ports`:
 |---|---|
 | `Fs` | ler/gravar arquivos, testar existência (check `--docs`, batch, `--out`) |
 | `Git` | `git show REV:FILE` para `--at` |
-| `Env` | variáveis de ambiente, confinadas à CLI |
-| `Logger` | avisos e log em `stderr` |
 
-`ports::fakes` oferece `MemFs`, `FakeGit`, `FakeEnv` e `RecordingLogger`; todo teste de domínio usa
-fakes e nenhum toca o disco.
+Os adaptadores reais vivem em `crates/akribie-adapters` (`StdFs`, `StdGit`); `akribie-cli` e
+`akribie-mcp` são as únicas camadas que os montam (ADR-0006 §3). Portas sem consumidor no domínio
+não existem: `Env` e `Logger` foram removidas em 0.1.3.
+
+`ports::fakes` oferece `MemFs` e `FakeGit`; todo teste de domínio usa fakes e nenhum toca o disco.
 
 ## Fluxo
 
@@ -62,9 +63,9 @@ cada verbo são validadas na CLI, pela mesma tabela de `--params`.
 
 ## Qualidade
 
-`make check` = `fmt` + `clippy -D warnings` (pedantic + nursery, `unsafe` negado, sem
-`unwrap`/`expect`/`panic`) + testes + tamanho de arquivo. `make ci` acrescenta `cargo deny` e
-`typos`.
+`make check` = `fmt` + `clippy -D warnings` (pedantic + cargo, `unsafe` negado, sem
+`unwrap`/`expect`/`panic`) + testes + tamanho de arquivo + `cargo tree` sem runtime assíncrono.
+`make ci` acrescenta `cargo deny` e `typos`.
 
 | camada | o que cobre |
 |---|---|

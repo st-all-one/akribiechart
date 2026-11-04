@@ -61,9 +61,9 @@ impl Default for Config {
             theme: theme("paper").unwrap_or(&PAPER),
             fontsize: 20.0,
             pad: 32.0,
-            lang: "en".to_string(),
-            sketch: true,
-            font: FontFamily::Hand,
+            lang: "pt-BR".to_string(),
+            sketch: false,
+            font: FontFamily::Sans,
         }
     }
 }
@@ -196,9 +196,9 @@ mod tests {
         assert_eq!(config.theme.name, "paper");
         assert_eq!(config.fontsize, 20.0);
         assert_eq!(config.pad, 32.0);
-        assert_eq!(config.lang, "en");
-        assert!(config.sketch);
-        assert_eq!(config.font, FontFamily::Hand);
+        assert_eq!(config.lang, "pt-BR");
+        assert!(!config.sketch);
+        assert_eq!(config.font, FontFamily::Sans);
     }
 
     #[test]

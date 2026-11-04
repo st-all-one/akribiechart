@@ -7,7 +7,7 @@ use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};
 use std::sync::Mutex;
 
-use super::{Env, Fs, Git, Logger};
+use super::{Fs, Git};
 use crate::error::{Error, Result};
 
 /// Sistema de arquivos em memória, ordenado (`BTreeMap`) para iteração determinística.
@@ -113,67 +113,6 @@ impl Git for FakeGit {
             .ok_or_else(|| {
                 Error::not_found(format!("{rev}:{} não existe na revisão", path.display()))
             })
-    }
-}
-
-/// Ambiente em memória.
-#[derive(Debug, Default)]
-pub struct FakeEnv {
-    vars: BTreeMap<String, String>,
-}
-
-impl FakeEnv {
-    /// Cria um ambiente vazio.
-    pub fn new() -> Self {
-        Self::default()
-    }
-
-    /// Define uma variável.
-    pub fn with_var(mut self, key: &str, value: &str) -> Self {
-        self.vars.insert(key.to_string(), value.to_string());
-        self
-    }
-}
-
-impl Env for FakeEnv {
-    fn var(&self, key: &str) -> Option<String> {
-        self.vars.get(key).cloned()
-    }
-}
-
-/// Logger que grava as mensagens em ordem, para asserção em teste.
-#[derive(Debug, Default)]
-pub struct RecordingLogger {
-    entries: Mutex<Vec<String>>,
-}
-
-impl RecordingLogger {
-    /// Cria um logger vazio.
-    pub fn new() -> Self {
-        Self::default()
-    }
-
-    /// Mensagens gravadas, em ordem.
-    pub fn entries(&self) -> Vec<String> {
-        self.entries
-            .lock()
-            .map_or_else(|_| Vec::new(), |entries| entries.clone())
-    }
-
-    fn push(&self, level: &str, message: &str) {
-        if let Ok(mut entries) = self.entries.lock() {
-            entries.push(format!("{level}: {message}"));
-        }
-    }
-}
-
-impl Logger for RecordingLogger {
-    fn warn(&self, message: &str) {
-        self.push("warn", message);
-    }
-
-    fn info(&self, message: &str) {
-        self.push("info", message);
     }
 }
 

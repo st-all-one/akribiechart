@@ -189,7 +189,7 @@ fn keyed_notes(notes: &[Note]) -> Vec<(String, &Note)> {
             let anchor = note.near.clone().unwrap_or_default();
             let index = seen.entry(anchor.clone()).or_insert(0);
             let key = format!("{anchor}#{index}");
-            *index += 1;
+            *index = index.saturating_add(1);
             (key, note)
         })
         .collect()

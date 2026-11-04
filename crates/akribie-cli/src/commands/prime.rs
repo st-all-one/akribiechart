@@ -18,8 +18,8 @@ Write topology, not coordinates: declare nodes and edges; `akr` computes geometr
 One statement per line, UTF-8 without BOM. Blank lines are free. `#` starts a comment.
 
 chart v1 \"Title\" [layout=flow|tree|mindmap|grid|stack|free] [direction=lr|tb|bt|rl]
-               [theme=paper|slate] [fontsize=20] [pad=32] [lang=en] [sketch=on|off]
-               [font=hand|sans] [doc=\"path#anchor\"]
+               [theme=paper|slate] [fontsize=20] [pad=32] [lang=pt-BR] [sketch=off|on]
+               [font=sans|hand] [doc=\"path#anchor\"]
 group ID [\"Label\"] [fill=…] [stroke=…] [pad=24] [in=ID,ID]
 node ID [\"Label\"] [shape=rect|rounded|circle|diamond|cloud|cylinder|hexagon|note|text]
                  [fill=none|paper|blue|green|amber|red|violet]
@@ -32,8 +32,8 @@ note \"Text\" [fill=…] [at=x,y] [size=w,h] [near=ID]
 Layouts: flow = pipeline (direction), tree = hierarchy, mindmap = topics, grid = catalog,
          stack = one column, free = declared positions (every node/note needs `at=x,y`).
 
-Finish: `sketch=on` (default) is hand-drawn; `sketch=off` is technical (exact lines, real arcs).
-Font: `font=hand` (default) is Excalifont; `font=sans` is Liberation Sans. Labels never touch a
+Finish: `sketch=off` (default) is technical (exact lines, real arcs); `sketch=on` is hand-drawn.
+Font: `font=sans` (default) is Liberation Sans; `font=hand` is Excalifont. Labels never touch a
 line, a border or another block: edge labels interrupt their own line with a 6 px gap.
 
 Example 1 — retry with backoff:

@@ -28,7 +28,9 @@ list   = ident { "," ident } ;
 ```
 
 - `ident` — letras, dígitos, `_` e `-`, começando por letra ou `_`. Nunca entre aspas.
-- `quoted` — texto entre `"`, com `\"` e `\\`; não pode conter quebra de linha.
+- `quoted` — texto entre `"`, com `\"` e `\\`; não pode conter quebra de linha. Um token que **abre**
+  com aspas é uma string inteira: `=` dentro dela é conteúdo (`node a "user=admin"`, `edge a -> b
+  "x=1"`), nunca separador de `chave=valor`. Fora das aspas, o primeiro `=` é sempre o separador.
 - `number` — inteiro ou decimal com ponto; `-` permitido; não-finitos são rejeitados.
 - Chaves são **fechadas**: chave desconhecida é `E002`, valor fora do conjunto é `E003` (com a lista
   do válido no `hint`). A fonte única da tabela é `syntax::option_specs`; `akr schema` e
@@ -47,9 +49,9 @@ list   = ident { "," ident } ;
 Conjuntos fechados: `layout` ∈ {flow, tree, mindmap, grid, stack, free}; `direction` ∈ {lr, tb, bt,
 rl}; `theme` ∈ {paper, slate}; `shape` ∈ {rect, rounded, circle, diamond, cloud, cylinder, hexagon,
 note, text}; `fillstyle` ∈ {hachure, solid, cross-hatch, zigzag}; `style` ∈ {solid, dashed, dotted};
-`curve` ∈ {line, arc, elbow}; `head`/`tail` ∈ {arrow, none}; `sketch` ∈ {on, off} (on — `off` é o
-traço técnico, sem perturbação); `font` ∈ {hand, sans} (hand — Excalifont; `sans` é a Liberation
-Sans embutida); tokens de cor ∈ {none, paper, ink, muted, blue, green, amber, red, violet}.
+`curve` ∈ {line, arc, elbow}; `head`/`tail` ∈ {arrow, none}; `sketch` ∈ {on, off} (padrão `off`:
+traço técnico; `on`: à mão); `font` ∈ {hand, sans} (padrão `sans`: Liberation Sans; `hand`:
+Excalifont); tokens de cor ∈ {none, paper, ink, muted, blue, green, amber, red, violet}.
 
 Faixas: `fontsize` ∈ [14, 96] (20); `pad` ∈ [0, 256] (32); `width` ∈ [2, 6] (2); `size` ≥ 1.
 

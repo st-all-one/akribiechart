@@ -76,7 +76,14 @@ fn spread(
     for child in list {
         let share = weight.get(child).copied().unwrap_or(1.0) / total;
         let child_span = (cursor, cursor + (end - start) * share);
-        spread(child, depth + 1, child_span, children, weight, centers);
+        spread(
+            child,
+            depth.saturating_add(1),
+            child_span,
+            children,
+            weight,
+            centers,
+        );
         cursor = child_span.1;
     }
 }
@@ -127,7 +134,7 @@ fn spanning(chart: &Chart, count: usize) -> (Vec<Vec<usize>>, usize) {
     let mut cursor = 0;
     while cursor < queue.len() {
         let current = queue.get(cursor).copied().unwrap_or(0);
-        cursor += 1;
+        cursor = cursor.saturating_add(1);
         for child in outgoing.get(current).cloned().unwrap_or_default() {
             if visited.get(child).copied().unwrap_or(true) {
                 continue;

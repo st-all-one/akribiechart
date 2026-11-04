@@ -38,8 +38,9 @@ permitido em qualquer layout); `layout=free` exige `at` em todo nó e nota.
 | `akr diff OLD NEW` | diff semântico por id; exit 1 quando há diferença |
 
 `check`, `fmt`, `render`, `import` e `diff` aceitam `--params '<json>'` (substitui integralmente
-posicionais e flags do verbo), `--json` (envelope `{success,command,data,warnings}`) e, em
-`check`/`render`, `--batch arquivo.jsonl` (uma linha por chart, best-effort, na ordem do arquivo).
+posicionais e flags do verbo); `check`, `render`, `import` e `diff` aceitam também `--json`
+(envelope `{success,command,data,warnings}`) e, em `check`/`render`, `--batch arquivo.jsonl` (uma
+linha por chart, best-effort, na ordem do arquivo).
 `render` e `diff` aceitam `--at REV` (fonte lida com `git show`, sem tocar a árvore).
 
 ## Ciclo
@@ -77,8 +78,9 @@ arquivo > default do binário. Chaves, valores fechados e defaults: `akr schema`
 | 8 | `.akrc` inválido (≥1 erro) ou lote 100% falho |
 | 70 | invariante interna quebrada |
 
-`render --format png|jpg|avif` exige `--out` (raster é binário); `--scale` multiplica o `viewBox`
-(default 2). `--dry-run` mede e reporta sem gravar.
+`render --format png|jpg|avif` exige `--out` (raster é binário); `--scale` (default 2) multiplica os
+pixels do raster — `--scale 2` dobra cada eixo — e o `viewBox` do SVG não muda. `--dry-run` mede e
+reporta sem gravar.
 
 ## Escolha do layout
 
@@ -105,12 +107,12 @@ Grupos são caixas em volta de membros: o nó declara `in=grupo` (um grupo pode 
 
 ## Acabamento e fonte
 
-`sketch=on` (padrão) desenha à mão; `sketch=off` desenha linhas exatas, arcos reais e uma única
-passada (modo técnico). `font=hand` usa a Excalifont; `font=sans` usa a Liberation Sans embutida.
-Ambas são chaves de `chart` (ou do `akribie.toml`):
+`sketch=off` (padrão) desenha linhas exatas, arcos reais e uma única passada (modo técnico);
+`sketch=on` desenha à mão. `font=sans` (padrão) usa a Liberation Sans embutida; `font=hand` usa a
+Excalifont. Ambas são chaves de `chart` (ou do `akribie.toml`):
 
 ```akrc
-chart v1 "Arquitetura" sketch=off font=sans
+chart v1 "Arquitetura" sketch=on font=hand
 ```
 
 ## Acessibilidade (não opcional)

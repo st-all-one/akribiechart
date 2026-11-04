@@ -7,12 +7,75 @@ O formato segue [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e o 
 
 ## [Não publicado]
 
+### Adicionado
+
+- (nada ainda)
+
+## [0.1.3] - 2026-11-03
+
+### Adicionado
+
+- `crates/akribie-adapters`: `StdFs` e `StdGit` saem da CLI e passam a ser uma crate montada por
+  `akribie-cli` e `akribie-mcp`, que deixa de manter uma cópia do adaptador de `Fs` (ADR-0006 §3).
+- `fixtures/reais/` com quatro diagramas de projeto e `docs/exemplos/diagramas-reais.md` (PNG 2× de
+  cada um, o `.akrc` de origem e como reproduzir); `akribie-cli/tests/golden/reais/` prende os bytes
+  do SVG e `crates/akribie-core/src/layout/overlap_tests.rs` afirma que nenhum rótulo encosta em nó,
+  em outro rótulo ou na borda do canvas.
+- `make tree`: a árvore de dependências normais não pode conter `tokio`/`async-std`, e a do domínio
+  compilado sem `raster` não pode conter `rayon`. `make ci` passa a ser o alvo do CI, com
+  `cargo-deny` e `typos` instalados pelo workflow.
+- `#![cfg_attr(not(test), deny(clippy::arithmetic_side_effects, clippy::string_slice))]` em
+  `akribie-core`, `akribie-cli`, `akribie-mcp` e `akribie-adapters` (ADR-0006 §4).
+- `scripts/bench.sh [--bin PATH] [--runs N]`: mede `svg`, `scene` e `png` por fixture real e imprime
+  `modo fixture ms/execucao`, para comparar versões sem opinião.
+- `akr import --json` estava implementado e ausente da documentação; `docs/usage/07-schema.md`
+  agora lista as chaves de `--params` verbatim do código (`import` inclusive) e explica que `--docs`
+  e `--out-dir` continuam aceitos junto de `--params`.
+
+### Alterado
+
+- **Padrão do renderizador**: `lang=pt-BR`, `sketch=off` (traço técnico) e `font=sans` (Liberation
+  Sans). O traço à mão com Excalifont vira opt-in explícito com `sketch=on font=hand`. Muda o SVG,
+  o `scene`, o raster e o `akribie.toml` escrito por `akr init`; `akr prime`, `akr schema` e as
+  tabelas de `docs/` acompanham os novos defaults.
+- Rótulo de aresta passa a ser posicionado pelo layout: a caixa do texto é reservada no dagre
+  (`EdgeLabel`), a posição é procurada ao longo do próprio traço e recusada quando encosta em nó,
+  em título de grupo ou em outro rótulo (SVG e `scene` mudam para quem tinha rótulo colidindo).
+- Rótulo de grupo é medido e quebrado na largura máxima: um título longo alarga a caixa do grupo em
+  vez de transbordar e ser cortado pelo `viewBox`.
+- O canvas inclui o fundo dos rótulos: nada mais é cortado na borda direita/inferior.
+
 ### Corrigido
 
 - `install.sh`, o README e a documentação apontam para `st-all-one/akribiechart`; o caminho
   `st-all-one/akribie` não existe e o `curl` de instalação retornava 404.
 - `akr render --format excalidraw` emite `"source": "https://github.com/st-all-one/akribiechart"`
   (os bytes do `.excalidraw` mudam).
+- `=` dentro de string entre aspas quebrava o parser: `node a "user=admin"` e `edge a -> b "x=1"`
+  saíam com `E007`. Um token que abre com aspas é uma string inteira.
+- `akr render` com formato desconhecido sugeria só `svg, png, jpg, avif`; agora inclui `scene` e
+  `excalidraw` no `hint`.
+
+### Medido (nada mudou)
+
+As otimizações da revisão foram medidas com `scripts/bench.sh` e, quando o caminho não é um dos
+fixtures, com A/B intercalado dos dois binários na mesma janela. O limiar de aceitação é ≥ 10% de
+ganho em algum caminho e nenhuma regressão acima de 5%; **nenhuma passou**, e todas foram
+revertidas. O números ficam aqui para a próxima tentativa:
+
+| mudança | medição | decisão |
+|---|---|---|
+| SVG escrito em `String` única (sem `Vec<String>` + `join`) | 0% nos quatro fixtures: a emissão é de dezenas de µs dentro de ~3 ms por execução | revertida |
+| `usvg::Options` em cache (fontes carregadas uma vez) | 0% no PNG: rasterização e codificação dominam os ~130 ms | revertida |
+| `Config::discover` reaproveitado no lote | −9% num lote de 200 itens (A/B intercalado, 15 execuções × 9 rodadas) | revertida (abaixo de 10%) |
+| reuso da quebra de rótulo já feita na medição do nó | −7% num diagrama de 300 nós (A/B intercalado) | revertida (abaixo de 10%) |
+| shaping incremental em `text.rs` | pré-condição não atendida: a medição de texto não chega a 30% do caminho `svg` | não aplicada |
+
+### Removido
+
+- Portas `Env` e `Logger` e os fakes `FakeEnv`/`RecordingLogger`: nenhum consumidor no domínio
+  (ADR-0006 §3). Os avisos continuam sendo `Diagnostic` escrito pela CLI em `stderr`.
+- `crates/akribie-cli/alvo.png`, PNG de 2 895 B commitado por engano.
 
 ## [0.1.2] - 2026-11-03
 

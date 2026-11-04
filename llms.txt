@@ -8,8 +8,8 @@
 
 - Fonte versionada: `.akrc`, UTF-8 sem BOM, uma afirmação por linha. Forma canônica por `akr fmt`.
 - `stdout` = dados, `stderr` = logs. `--json` = `{"success","command","data"?,"error"?,"warnings"}`.
-- Exit codes: 0 sucesso · 1 `fmt --check` diferiu · 2 uso inválido · 3 não encontrado · 5 I/O ·
-  8 schema inválido · 70 invariante interna.
+- Exit codes: 0 sucesso · 1 `fmt --check` diferiu ou `diff` achou diferença · 2 uso inválido ·
+  3 não encontrado · 5 I/O · 8 schema inválido · 70 invariante interna.
 - Determinismo: SVG e `scene` são contrato de bytes; raster é determinístico na versão.
 - Acessibilidade: `role="img"`, `<title>`, `<desc>` com a topologia, `aria-label` por elemento,
   contraste 4.5:1 (texto) e 3:1 (contorno).
@@ -36,8 +36,8 @@
 
 ```
 chart v1 "Título" [layout=flow|tree|mindmap|grid|stack|free] [direction=lr|tb|bt|rl]
-                  [theme=paper|slate] [fontsize=20] [pad=32] [lang=en] [sketch=on|off]
-                  [font=hand|sans] [doc="path#anchor"]
+                  [theme=paper|slate] [fontsize=20] [pad=32] [lang=pt-BR] [sketch=off|on]
+                  [font=sans|hand] [doc="path#anchor"]
 group  ID [ "Rótulo" ] [fill=…] [stroke=…] [pad=24] [in=ID,ID]
 node   ID [ "Rótulo" ] [shape=…] [fill=…] [fillstyle=hachure|solid|cross-hatch|zigzag]
                        [stroke=…] [style=solid|dashed|dotted] [width=2] [in=…] [at=x,y] [size=w,h]

@@ -1,0 +1,23 @@
+chart v1 "Boot da V2 — auto-descoberta" direction=tb doc="README.md#boot-descoberta" font=sans lang=pt-BR layout=flow sketch=off
+
+node boot "V2ServiceProvider::boot()" fill=blue
+node modules "V2/Modules/{Grupo}/{Modulo}" fill=paper
+node services "V2/Services/{Servico}" fill=paper
+node prov "ModuleProvider" fill=green
+node cfg "v2.modules.configs" fill=violet shape=cylinder
+node mig "Migrations" fill=amber
+node views "Views" fill=amber
+node rots "Rotas" fill=amber
+node fallback "fallback route" fill=red
+node cmds "Comandos artisan" fill=amber
+
+edge boot -> modules
+edge boot -> services
+edge modules -> prov
+edge prov -> cfg
+edge modules -> mig
+edge modules -> views
+edge modules -> rots
+edge services -> rots
+edge services -> cmds
+edge boot -> fallback

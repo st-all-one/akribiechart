@@ -1,0 +1,24 @@
+chart v1 "Anatomia de um módulo V2" direction=lr doc="README.md#anatomia-modulo" font=sans lang=pt-BR layout=tree sketch=off
+
+node mod "V2/Modules/{Grupo}/{Modulo}" fill=blue
+node prov "ModuleProvider.php (obrigatório)" fill=green
+node ctl "Controllers/" fill=paper
+node mdl "Models/" fill=paper
+node vw "Views/" fill=paper
+node rt "Routes/ (web, cms, api)" fill=paper
+node mig "Migrations/ (v2_*)" fill=paper
+node req "Requests/" fill=paper
+node srv "Services/" fill=paper
+node seed "Seeds/" fill=paper
+node ast "assets/" fill=paper
+
+edge mod -> prov
+edge mod -> ctl
+edge mod -> mdl
+edge mod -> vw "v2-{modulo}::"
+edge mod -> rt
+edge mod -> mig
+edge mod -> req
+edge mod -> srv
+edge mod -> seed
+edge mod -> ast

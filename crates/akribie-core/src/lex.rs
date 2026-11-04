@@ -57,6 +57,12 @@ pub fn lex(line: &str, start: Span) -> Result<Vec<Token>, Diagnostic> {
 }
 
 fn classify(raw: &str, span: Span, out: &mut Vec<Token>) -> Result<(), Diagnostic> {
+    // Um token que abre com aspas é uma string inteira: `=` dentro dela é conteúdo
+    // (`node a "user=admin"`), nunca separador de chave.
+    if raw.starts_with('"') {
+        out.push(single(raw, span)?);
+        return Ok(());
+    }
     let Some((key, value)) = raw.split_once('=') else {
         out.push(single(raw, span)?);
         return Ok(());
@@ -281,3 +287,6 @@ impl Scanner {
         Ok((raw, span))
     }
 }
+
+#[cfg(test)]
+mod tests;

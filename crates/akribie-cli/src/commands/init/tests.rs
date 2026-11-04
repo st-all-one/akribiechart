@@ -17,11 +17,11 @@ fn first_run_creates_config_block_and_skill() {
     let agents = fs.contents(AGENTS).expect("AGENTS.md");
     assert!(agents.contains("<!-- akribie:start -->"));
     assert!(agents.contains("<!-- akribie:end -->"));
-    assert!(
-        fs.contents(CONFIG)
-            .expect("config")
-            .contains("layout = flow")
-    );
+    let config = fs.contents(CONFIG).expect("config");
+    assert!(config.contains("layout = flow"));
+    assert!(config.contains("sketch = off"));
+    assert!(config.contains("font = sans"));
+    assert!(config.contains("lang = \"pt-BR\""));
 }
 
 #[test]

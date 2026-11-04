@@ -13,7 +13,9 @@ Do source: `make release && make install` instala `akr` e `akribie-mcp` em `~/.l
 instalador confere o SHA-256 do pacote do Release e aceita `VERSION`, `INSTALL_DIR` e
 `AKR_TARGET`.
 
-A fonte tipográfica (Excalifont, OFL) é embutida no binário; não há dependência de fontes do sistema.
+As duas faces tipográficas (Excalifont e Liberation Sans, ambas OFL) são embutidas no binário; não
+há dependência de fontes do sistema. O padrão é a Liberation Sans (`font=sans`); a Excalifont entra
+com `font=hand`.
 
 ## Primeiro diagrama
 

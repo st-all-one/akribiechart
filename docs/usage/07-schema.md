@@ -20,7 +20,7 @@ A saída é JSON *pretty* com `\n` final e **não** é um envelope `--json`: o s
 ```json
 {
   "schema_version": 1,
-  "akribie_version": "0.1.2",
+  "akribie_version": "0.1.3",
   "keywords": ["chart", "group", "node", "edge", "note"],
   "statements": {
     "chart": { "options": [ { "key": "layout", "type": "enum", "default": "flow",
@@ -48,9 +48,16 @@ Cada verbo aceita um JSON equivalente às flags (útil para agentes que montam a
 
 | verbo | chaves |
 |---|---|
-| `check` | `path`, `source`, `strict`, `docs`, `batch` |
+| `check` | `path`, `source`, `strict`, `docs` |
 | `fmt` | `path`, `source`, `write`, `check` |
-| `render` | `path`, `source`, `format`, `out`, `scale`, `at`, `batch`, `out_dir` |
-| `diff` | `old`, `new`, `at`, `old_source`, `new_source` |
+| `render` | `path`, `source`, `format`, `out`, `scale`, `at`, `dry_run` |
+| `diff` | `old`, `new`, `at` |
+| `import` | `path`, `source`, `name` |
 
-`--params` substitui posicionais e flags do verbo: usar os dois juntos é exit 2.
+`--params` substitui o posicional e as flags do verbo: usar os dois juntos é exit 2. As chaves são
+exatamente as da coluna, e o verbo ignora nome de campo fora dela — chave desconhecida é exit 2 com
+a lista das válidas.
+
+Duas flags de lote continuam aceitas **junto** de `--params`, porque não descrevem um diagrama e sim
+o arquivo onde ele entra: `check --params … --docs` (audita o `doc=` de cada item) e
+`render --params … --out-dir DIR` (destino do lote). Só o posicional e as flags do verbo conflitam.

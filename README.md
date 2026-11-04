@@ -7,7 +7,7 @@ Diagramas determinísticos e acessíveis a partir de texto — topologia é a fo
 [![License](https://img.shields.io/badge/license-MIT%20OR%20Apache--2.0-2b3a42?style=for-the-badge)](./LICENSE)
 [![Rust](https://img.shields.io/badge/rust-1.99%2B-DEA584?style=for-the-badge&logo=rust&logoColor=000)](https://www.rust-lang.org/)
 [![MCP](https://img.shields.io/badge/MCP-JSON--RPC%202.0-6E56CF?style=for-the-badge)](docs/usage/06-init-prime.md)
-[![Version](https://img.shields.io/badge/version-0.1.2-009739?style=for-the-badge)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-0.1.3-009739?style=for-the-badge)](CHANGELOG.md)
 
 </div>
 
@@ -40,7 +40,7 @@ curl --proto '=https' \
   | bash
 ```
 
-Versão fixa: `... | VERSION=v0.1.2 bash`. Outro destino: `... | INSTALL_DIR=/usr/local/bin bash`.
+Versão fixa: `... | VERSION=v0.1.3 bash`. Outro destino: `... | INSTALL_DIR=/usr/local/bin bash`.
 Sem editar os rc files: `... | AKR_NO_PATH=1 bash`. A partir do código-fonte:
 `./install.sh --from-source` ou `make release && make install`.
 

@@ -130,12 +130,12 @@ pub(crate) fn execute(args: &RenderArgs, fs: &dyn Fs, git: &dyn Git) -> Result<R
             text_output(document, out, fs, writing)?
         }
         Format::Svg => {
-            let scene = paint::paint(&report.chart, &placed, &font);
+            let scene = paint::paint(&report.chart, &placed);
             let document = svg(&scene, report.chart.theme);
             text_output(document, out, fs, writing)?
         }
         Format::Raster(raster) => {
-            let scene = paint::paint(&report.chart, &placed, &font);
+            let scene = paint::paint(&report.chart, &placed);
             let document = svg(&scene, report.chart.theme);
             let bytes = encode(&document, raster, scale)?;
             let size = bytes.len();

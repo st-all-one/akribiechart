@@ -3,7 +3,6 @@
 use akribie_core::diag::has_errors;
 use akribie_core::emit::{self, RasterFormat};
 use akribie_core::paint::paint;
-use akribie_core::text::Font;
 use serde_json::{Value, json};
 
 use super::{SOURCE_LABEL, Source, diagnostic_line, error_result, evaluate, source, text_result};
@@ -59,14 +58,10 @@ pub(super) fn render(arguments: &Value) -> Value {
     if has_errors(&evaluated.diagnostics) {
         return error_result(&diagnostic_line(&evaluated.diagnostics, SOURCE_LABEL));
     }
-    let font = match Font::load() {
-        Ok(font) => font,
-        Err(error) => return error_result(error.message()),
-    };
     let theme = evaluated.chart.theme;
     match format {
         "svg" => {
-            let scene = paint(&evaluated.chart, &evaluated.placed, &font);
+            let scene = paint(&evaluated.chart, &evaluated.placed);
             text_result(&emit::svg(&scene, theme))
         }
         "scene" => text_result(&emit::scene_json(&evaluated.placed, &evaluated.chart)),
@@ -75,7 +70,7 @@ pub(super) fn render(arguments: &Value) -> Value {
             let Some(raster) = RasterFormat::from_name(other) else {
                 return error_result(&format!("formato desconhecido: {other}"));
             };
-            let scene = paint(&evaluated.chart, &evaluated.placed, &font);
+            let scene = paint(&evaluated.chart, &evaluated.placed);
             let document = emit::svg(&scene, theme);
             match emit::encode(&document, raster, f32_scale(scale)) {
                 Ok(bytes) => image_result(&bytes, mime(raster)),

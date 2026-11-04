@@ -14,7 +14,7 @@ fn scene_of(source: &str) -> (Chart, Scene) {
     let (document, _) = parse(source);
     let (chart, _) = resolve(&document, &Config::default());
     let placed = layout(&chart, &font);
-    let scene = paint(&chart, &placed, &font);
+    let scene = paint(&chart, &placed);
     (chart, scene)
 }
 

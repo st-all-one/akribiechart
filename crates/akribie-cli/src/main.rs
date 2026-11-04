@@ -1,12 +1,13 @@
 //! Binário `akr`.
 //!
-//! A CLI é a única camada que monta as implementações reais das portas (`StdFs`, `StdGit`,
-//! `StdEnv`, `StderrLogger`). O domínio em `akribie-core` não toca o sistema operacional.
+//! A CLI é uma das duas camadas que montam os adaptadores reais de `akribie-adapters` (`StdFs`,
+//! `StdGit`); a outra é o servidor MCP. O domínio em `akribie-core` não toca o sistema operacional.
 
 #![forbid(unsafe_code)]
 #![warn(missing_docs)]
+// Aritmética sem estouro e fatiamento seguro valem em produção; em teste, ADR-0006 §4.
+#![cfg_attr(not(test), deny(clippy::arithmetic_side_effects, clippy::string_slice))]
 
-mod adapters;
 mod app;
 mod batch;
 mod cli;

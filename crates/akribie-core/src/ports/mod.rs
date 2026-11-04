@@ -1,7 +1,9 @@
 //! Portas de I/O do domínio (ADR-0001 §3).
 //!
-//! O núcleo nunca toca o sistema operacional: leitura, escrita, `git` e ambiente atravessam estas
-//! quatro traits. A CLI monta as implementações reais; os testes usam os fakes de [`fakes`].
+//! O núcleo nunca toca o sistema operacional: leitura, escrita e `git` atravessam estas duas
+//! traits. `akribie-adapters` monta as implementações reais (ADR-0006 §3); os testes usam os fakes
+//! de [`fakes`]. Um adaptador sem consumidor no domínio não é porta: `Env` e `Logger` existiam sem
+//! uso e foram removidas.
 
 use std::path::Path;
 
@@ -38,20 +40,6 @@ pub trait Git {
     /// # Errors
     /// `NotFound` quando a revisão ou o caminho não existir; `Io` quando o `git` falhar.
     fn show(&self, rev: &str, path: &Path) -> Result<String>;
-}
-
-/// Ambiente do processo (única leitura não determinística, confinada à CLI).
-pub trait Env {
-    /// Valor da variável, se definida.
-    fn var(&self, key: &str) -> Option<String>;
-}
-
-/// Saída de log (stderr). `stdout` é reservado a dados.
-pub trait Logger {
-    /// Mensagem de advertência.
-    fn warn(&self, message: &str);
-    /// Mensagem informativa.
-    fn info(&self, message: &str);
 }
 
 pub mod fakes;

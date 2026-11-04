@@ -19,8 +19,11 @@ jobs:
           toolchain: "1.99"
           components: rustfmt, clippy
       - uses: Swatinem/rust-cache@v2
-      - name: make check
-        run: make check
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-deny,typos
+      - name: make ci
+        run: make ci
       - name: install.sh (sintaxe)
         run: bash -n install.sh
       - name: xtask compila

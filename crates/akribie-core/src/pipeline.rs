@@ -137,13 +137,16 @@ mod tests {
 
     #[test]
     fn missing_glyphs_are_reported_per_element() {
-        assert_eq!(codes("chart v1 \"x\"\nnode a \"🦀\"\n"), ["W002", "W003"]);
+        assert_eq!(
+            codes("chart v1 \"x\" font=hand\nnode a \"🦀\"\n"),
+            ["W002", "W003"]
+        );
     }
 
     #[test]
     fn diagnostics_are_sorted_by_position() {
         assert_eq!(
-            codes("chart v1 \"x\"\nnode a \"🦀\"\nnode b \"🦀\"\n"),
+            codes("chart v1 \"x\" font=hand\nnode a \"🦀\"\nnode b \"🦀\"\n"),
             ["W002", "W003", "W002", "W003"]
         );
     }

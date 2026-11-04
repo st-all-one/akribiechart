@@ -46,14 +46,15 @@ Duas chaves de `chart` (ou do `akribie.toml`) mudam o traço e a tipografia sem 
 
 | chave | valores | padrão | efeito |
 |---|---|---|---|
-| `sketch` | `on`, `off` | `on` | `on` = traço à mão (duas passadas, semente do id); `off` = traço técnico (linhas exatas, arcos reais, uma passada) |
-| `font` | `hand`, `sans` | `hand` | `hand` = Excalifont; `sans` = Liberation Sans (embutida, com métricas próprias) |
+| `sketch` | `on`, `off` | `off` | `off` = traço técnico (linhas exatas, arcos reais, uma passada); `on` = traço à mão (duas passadas, semente do id) |
+| `font` | `hand`, `sans` | `sans` | `sans` = Liberation Sans; `hand` = Excalifont (ambas embutidas, com métricas próprias) |
 
 ```akrc
-chart v1 "Arquitetura" sketch=off font=sans
+chart v1 "Arquitetura" sketch=on font=hand
 ```
 
-O modo técnico é o mesmo modelo e o mesmo layout: só a pintura muda. Os bytes do SVG também são
+O traço à mão e a Excalifont são **opt-in**: o padrão é o modo técnico com Liberation Sans. O modo
+técnico é o mesmo modelo e o mesmo layout: só a pintura muda. Os bytes do SVG também são
 determinísticos nos dois modos.
 
 ## `--params`

@@ -352,3 +352,12 @@ fn docs_lineage_reports_missing_document_or_anchor() {
     assert_eq!(run.code, 0, "warning não bloqueia: {}", run.stdout);
     assert!(run.stdout.contains("W004"), "{}", run.stdout);
 }
+
+#[test]
+fn quoted_label_may_contain_equals() {
+    let run = run(
+        &["check", "-"],
+        Some("chart v1 \"T\"\nnode a \"user=admin\"\nnode b \"B\"\nedge a -> b\n"),
+    );
+    assert_eq!(run.code, 0, "stderr: {}", run.stderr);
+}

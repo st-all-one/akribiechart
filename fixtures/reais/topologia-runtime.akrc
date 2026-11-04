@@ -1,0 +1,16 @@
+chart v1 "Topologia de execução" direction=tb doc="README.md#topologia-runtime" font=sans lang=pt-BR layout=flow sketch=off
+
+group docker "Docker" fill=paper
+
+node nginx "nginx :10010 -> :8000" fill=blue in=docker
+node php "php-fpm / Laravel 5.5" fill=blue in=docker
+node pg "PostgreSQL 17" fill=violet in=docker shape=cylinder
+node vol "volume PG externo" fill=paper in=docker shape=cylinder
+node browser "Navegador v2.<dominio>" fill=paper
+node jenkins "Jenkins rsync + rebuild" fill=amber
+
+edge browser -> nginx
+edge nginx -> php "FastCGI"
+edge php -> pg "pgsql"
+edge pg -> vol "dados"
+edge jenkins -> nginx

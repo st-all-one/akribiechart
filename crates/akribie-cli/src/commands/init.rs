@@ -123,22 +123,29 @@ fn update_agents(fs: &dyn Fs) -> Result<Status> {
         return Ok(Status::Created);
     }
     let current = fs.read(path)?;
-    let next = match (current.find(BLOCK_START), current.find(BLOCK_END)) {
+    // Os dois limites vêm de `find`, então são fronteiras de caractere; `get` devolve `None` em
+    // vez de estourar se um marcador estiver sobreposto.
+    let spliced = match (current.find(BLOCK_START), current.find(BLOCK_END)) {
         (Some(start), Some(end)) if end > start => {
-            let head = &current[..start];
-            let tail = &current[end + BLOCK_END.len()..];
-            format!("{head}{BLOCK_START}\n{}{BLOCK_END}{tail}", block_between())
+            let after = end.checked_add(BLOCK_END.len());
+            current
+                .get(..start)
+                .zip(after.and_then(|after| current.get(after..)))
+                .map(|(head, tail)| {
+                    format!("{head}{BLOCK_START}\n{}{BLOCK_END}{tail}", block_between())
+                })
         }
-        _ => {
-            let mut next = current.clone();
-            if !next.ends_with('\n') {
-                next.push('\n');
-            }
-            next.push('\n');
-            next.push_str(&full_block());
-            next
-        }
+        _ => None,
     };
+    let next = spliced.unwrap_or_else(|| {
+        let mut next = current.clone();
+        if !next.ends_with('\n') {
+            next.push('\n');
+        }
+        next.push('\n');
+        next.push_str(&full_block());
+        next
+    });
     if next == current {
         return Ok(Status::Unchanged);
     }
@@ -174,7 +181,7 @@ fn config_text() -> String {
          # Chaves: layout, direction, theme, fontsize, pad, lang, sketch, font.\n\
          # Valores válidos e defaults: `akr schema`.\n\
          # Precedência: opção no `.akrc` > este arquivo > default do binário.\n\
-         # sketch=off + font=sans: traço técnico (linhas exatas) e Liberation Sans.\n",
+         # default: traço técnico + Liberation Sans; `sketch=on font=hand` = traço à mão.\n",
     );
     // Valores de enum/token/número saem sem aspas (o léxico do `.akrc` é a fonte); só texto puro
     // (`lang`) é string.
@@ -183,9 +190,9 @@ fn config_text() -> String {
     text.push_str("theme = paper\n");
     text.push_str("fontsize = 20\n");
     text.push_str("pad = 32\n");
-    text.push_str("lang = \"en\"\n");
-    text.push_str("sketch = on\n");
-    text.push_str("font = hand\n");
+    text.push_str("lang = \"pt-BR\"\n");
+    text.push_str("sketch = off\n");
+    text.push_str("font = sans\n");
     text
 }
 

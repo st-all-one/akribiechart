@@ -17,10 +17,12 @@ coordenadas.
    `.excalidraw`.
    Proibido no domínio: `SystemTime::now`, `env::var`, `rand`, iteração sobre `HashMap`/`HashSet`.
    Sementes sempre derivadas do id (`sketch::seed_for`).
-3. **Portas, não I/O direto.** O domínio só conhece `ports::{Fs, Git, Env, Logger}`; fakes em
-   `ports::fakes`. A CLI é a única que monta `StdFs`/`StdGit`/`StdEnv`/`TracingLogger`.
-4. **`make check` é o portão único.** `fmt` + `clippy -D warnings` + `test` + limite de 300 linhas.
-   Nenhum `#[allow]` sem `reason = "..."`. Nenhum arquivo acima de 300 linhas.
+3. **Portas, não I/O direto.** O domínio só conhece `ports::{Fs, Git}`; fakes em `ports::fakes`.
+   Os adaptadores reais (`StdFs`, `StdGit`) vivem em `crates/akribie-adapters`; CLI e MCP são as
+   únicas camadas que os montam (ADR-0006 §3).
+4. **`make check` é o portão único.** `fmt` + `clippy -D warnings` + `test` + limite de linhas +
+   `cargo tree` sem runtime assíncrono. Nenhum `#[allow]` sem `reason = "..."`. Nenhum arquivo de
+   produção acima de 300 linhas (`crates/**/src` e `xtask/src`).
 5. **Documentação é entregável.** Superfície, docs e testes mudam no mesmo passo. Um verbo novo sem
    `docs/usage/`, sem linha na matriz e sem golden está incompleto.
 
@@ -41,7 +43,8 @@ Ordem de leitura para entender o projeto: `docs/plan/00-panorama.md` →
 | caminho | conteúdo |
 |---|---|
 | `crates/akribie-core/src/` | domínio puro (lex, parse, resolve, layout, paint, emit, diff) |
-| `crates/akribie-cli/src/` | bin `akr`, envelope, comandos, adaptadores das portas |
+| `crates/akribie-adapters/src/` | adaptadores reais das portas (`StdFs`, `StdGit`) — ADR-0006 §3 |
+| `crates/akribie-cli/src/` | bin `akr`: envelope, comandos, apresentação |
 | `crates/akribie-mcp/src/` | servidor MCP (JSON-RPC sobre stdio) |
 | `xtask/` | utilitário de build (fonte woff2 → ttf) |
 | `assets/` | `Excalifont-Regular.ttf` commitado, OFL e `FONT.lock` |
@@ -49,6 +52,8 @@ Ordem de leitura para entender o projeto: `docs/plan/00-panorama.md` →
 | `docs/plan/` | panorama, fases e matriz de aceitação |
 | `docs/specs/` | gramática, arquitetura, acessibilidade, determinismo |
 | `docs/usage/` | um guia por verbo, com exemplo executável |
+| `docs/exemplos/` | diagramas reais renderizados (PNG) com o `.akrc` de origem |
+| `fixtures/reais/` | os quatro `.akrc` de `docs/exemplos/` — regressão de renderização |
 | `_REF/` | referências externas — **nunca editar** |
 
 ## Coisas que quebram em silêncio (leia antes de editar)

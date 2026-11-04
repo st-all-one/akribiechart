@@ -22,7 +22,7 @@ pub(crate) fn emit_batch_check(outcomes: &[BatchCheckOutcome], mode: Mode) -> Ex
     let ok = outcomes.iter().filter(|outcome| outcome.ok()).count();
     let failed = outcomes.len().saturating_sub(ok);
     let all_failed = ok == 0;
-    let code = u8::from(all_failed) * 8;
+    let code = u8::from(all_failed).saturating_mul(8);
     if let Mode::Json = mode {
         let items: Vec<serde_json::Value> = outcomes
             .iter()
@@ -91,7 +91,7 @@ pub(crate) fn emit_batch_render(outcomes: &[BatchRenderOutcome], mode: Mode) -> 
     let ok = outcomes.iter().filter(|outcome| outcome.ok()).count();
     let failed = outcomes.len().saturating_sub(ok);
     let all_failed = ok == 0;
-    let code = u8::from(all_failed) * 8;
+    let code = u8::from(all_failed).saturating_mul(8);
     if let Mode::Json = mode {
         let items: Vec<serde_json::Value> = outcomes
             .iter()

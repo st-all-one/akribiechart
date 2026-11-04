@@ -9,7 +9,7 @@ use crate::geometry::Rect;
 use crate::layout::Placed;
 use crate::model::{Chart, StrokeStyle};
 use crate::sketch::{Ink, seed_for};
-use crate::text::{self, Font};
+use crate::text;
 
 /// Raio do canto de `shape=rounded`.
 pub const CORNER_RADIUS: f32 = 12.0;
@@ -88,8 +88,8 @@ pub struct NodeDraw {
 /// Rótulo de aresta com fundo.
 #[derive(Debug, Clone, PartialEq)]
 pub struct LabelDraw {
-    /// Texto.
-    pub text: TextRun,
+    /// Linhas do texto.
+    pub text: Vec<TextRun>,
     /// Fundo (cor do canvas).
     pub rect: Rect,
 }
@@ -120,8 +120,8 @@ pub struct GroupDraw {
     pub aria_label: Option<String>,
     /// Contorno.
     pub stroke: Stroke,
-    /// Rótulo.
-    pub label: Option<TextRun>,
+    /// Linhas do rótulo.
+    pub label: Vec<TextRun>,
 }
 
 /// Nota desenhada.
@@ -165,9 +165,8 @@ pub struct Scene {
 }
 
 /// Pinta o desenho com o tema e o tamanho de fonte do documento.
-pub fn paint(chart: &Chart, placed: &Placed, font: &Font) -> Scene {
+pub fn paint(chart: &Chart, placed: &Placed) -> Scene {
     let theme = chart.theme;
-    let gauge = font.gauge(chart.font);
     let finish = |seed: u32| {
         if chart.sketch {
             Ink::Rough(seed)
@@ -192,7 +191,7 @@ pub fn paint(chart: &Chart, placed: &Placed, font: &Font) -> Scene {
             .iter()
             .map(|edge| {
                 let seed = seed_for(&edge.from) ^ seed_for(&edge.to);
-                paint_edge(edge, theme, chart.fontsize, gauge, finish(seed))
+                paint_edge(edge, theme, chart.fontsize, finish(seed))
             })
             .collect(),
         nodes: placed

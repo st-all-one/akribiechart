@@ -28,7 +28,7 @@ impl Format {
             .map(Self::Raster)
             .ok_or_else(|| {
                 Error::invalid_input(format!(
-                    "formato `{name}` desconhecido; use svg, png, jpg ou avif"
+                    "formato `{name}` desconhecido; use svg, scene, excalidraw, png, jpg ou avif"
                 ))
             })
     }

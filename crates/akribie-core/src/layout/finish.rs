@@ -4,14 +4,11 @@ use indexmap::IndexMap;
 
 use crate::geometry::{self, Rect};
 use crate::model::{Chart, Curve};
-use crate::text::{self, Gauge};
+use crate::text::Gauge;
 
-use super::{Placed, PlacedEdge, PlacedGroup, PlacedNode, PlacedNote, arrows, label_lines};
-
-/// Distância entre um nó e a nota ancorada nele.
-const NOTE_GAP: f32 = 24.0;
-/// Respiro interno de uma nota.
-const NOTE_PADDING: f32 = 8.0;
+use super::{
+    Placed, PlacedEdge, PlacedGroup, PlacedNode, PlacedNote, arrows, label_lines, labels, notes,
+};
 
 pub(super) fn assemble(
     chart: &Chart,
@@ -46,27 +43,40 @@ pub(super) fn assemble(
         .enumerate()
         .map(|(position, node)| (node.id.as_str(), position))
         .collect();
-    let mut groups = group_boxes(chart, &nodes);
-    let mut notes = note_boxes(chart, font, &nodes, &index);
+    let mut groups = group_boxes(chart, font, &nodes);
+    let mut note_list = notes::note_boxes(chart, font, &nodes, &index);
     let mut edges = edge_routes(chart, &nodes, &index);
-    let (width, height) = normalize(&mut nodes, &mut groups, &mut notes, &mut edges, chart.pad);
+    labels::place(chart, font, &nodes, &groups, &mut edges);
+    let (width, height) = normalize(
+        &mut nodes,
+        &mut groups,
+        &mut note_list,
+        &mut edges,
+        chart.pad,
+    );
     Placed {
         width,
         height,
         groups,
         nodes,
         edges,
-        notes,
+        notes: note_list,
     }
 }
 
 /// Caixa de cada grupo: união recursiva dos nós e subgrupos, inflada por `pad`.
-fn group_boxes(chart: &Chart, nodes: &[PlacedNode]) -> Vec<PlacedGroup> {
+fn group_boxes(chart: &Chart, gauge: &Gauge, nodes: &[PlacedNode]) -> Vec<PlacedGroup> {
     let count = chart.groups.len();
+    // O rótulo é medido uma vez: a faixa da caixa e as linhas desenhadas saem do mesmo cálculo.
+    let mut metrics: Vec<(Vec<String>, f32, f32)> = chart
+        .groups
+        .iter()
+        .map(|group| labels::group_metrics(gauge, &group.label, chart.fontsize))
+        .collect();
     let mut memo: Vec<Option<Rect>> = vec![None; count];
     let mut visiting = vec![false; count];
     for position in 0..count {
-        resolve_group(position, chart, nodes, &mut memo, &mut visiting);
+        resolve_group(position, chart, &metrics, nodes, &mut memo, &mut visiting);
     }
     chart
         .groups
@@ -78,6 +88,9 @@ fn group_boxes(chart: &Chart, nodes: &[PlacedNode]) -> Vec<PlacedGroup> {
                 id: group.id.clone(),
                 rect,
                 label: group.label.clone(),
+                label_lines: metrics
+                    .get_mut(position)
+                    .map_or_else(Vec::new, |metric| std::mem::take(&mut metric.0)),
                 stroke: group.stroke,
                 style: group.style,
                 width: group.width,
@@ -90,6 +103,7 @@ fn group_boxes(chart: &Chart, nodes: &[PlacedNode]) -> Vec<PlacedGroup> {
 fn resolve_group(
     position: usize,
     chart: &Chart,
+    metrics: &[(Vec<String>, f32, f32)],
     nodes: &[PlacedNode],
     memo: &mut Vec<Option<Rect>>,
     visiting: &mut Vec<bool>,
@@ -114,15 +128,25 @@ fn resolve_group(
     }
     for (child_position, child) in chart.groups.iter().enumerate() {
         if child.groups.iter().any(|id| id == &group.id)
-            && let Some(child_rect) = resolve_group(child_position, chart, nodes, memo, visiting)
+            && let Some(child_rect) =
+                resolve_group(child_position, chart, metrics, nodes, memo, visiting)
         {
             rect = Some(rect.map_or(child_rect, |current| current.union(child_rect)));
         }
     }
+    let (text_w, band) = metrics
+        .get(position)
+        .map_or((0.0, 0.0), |(_, text_w, band)| (*text_w, *band));
     let result = rect.map(|box_| {
         let padded = box_.inflate(group.pad);
-        let band = chart.fontsize * text::LINE_HEIGHT;
-        Rect::new(padded.x, padded.y - band, padded.w, padded.h + band)
+        // A faixa do título sai da largura do grupo, mas nunca fica mais estreita que o texto:
+        // um rótulo longo alarga a caixa em vez de transbordar.
+        Rect::new(
+            padded.x,
+            padded.y - band,
+            padded.w.max(text_w),
+            padded.h + band,
+        )
     });
     if let Some(slot) = memo.get_mut(position) {
         *slot = result;
@@ -131,48 +155,6 @@ fn resolve_group(
         *flag = false;
     }
     result
-}
-
-/// Notas: `at` manda; sem ele, a nota fica na diagonal inferior direita do nó de `near=`
-/// (abaixo do rank e à direita da coluna, sem disputar com os dois).
-fn note_boxes(
-    chart: &Chart,
-    font: &Gauge,
-    nodes: &[PlacedNode],
-    index: &IndexMap<&str, usize>,
-) -> Vec<PlacedNote> {
-    chart
-        .notes
-        .iter()
-        .map(|note| {
-            let lines = font.wrap(&note.text, chart.fontsize, text::MAX_LABEL_W);
-            let (width, height) = note.size.unwrap_or_else(|| {
-                let (text_w, text_h) = font.label_size(&note.text, chart.fontsize);
-                (text_w + 2.0 * NOTE_PADDING, text_h + 2.0 * NOTE_PADDING)
-            });
-            let anchor = note
-                .near
-                .as_ref()
-                .and_then(|id| index.get(id.as_str()))
-                .and_then(|position| nodes.get(*position));
-            let rect = match (note.at, anchor) {
-                (Some(at), _) => Rect::new(at.0, at.1, width, height),
-                (None, Some(target)) => Rect::new(
-                    target.rect.right() + NOTE_GAP,
-                    target.rect.bottom() + NOTE_GAP * 0.5,
-                    width,
-                    height,
-                ),
-                (None, None) => Rect::new(0.0, 0.0, width, height),
-            };
-            PlacedNote {
-                rect,
-                text: lines,
-                fill: note.fill,
-                span: note.span,
-            }
-        })
-        .collect()
 }
 
 /// Arestas: rota do contorno de origem ao contorno de destino.
@@ -212,6 +194,8 @@ fn edge_routes(
                 curve: edge.curve,
                 label: edge.label.clone(),
                 label_at: middle,
+                label_rect: None,
+                label_lines: Vec::new(),
                 route,
                 head,
                 tail,
@@ -254,6 +238,10 @@ fn normalize(
         for point in &edge.route {
             observe(*point);
         }
+        if let Some(rect) = edge.label_rect {
+            observe((rect.x, rect.y));
+            observe((rect.right(), rect.bottom()));
+        }
     }
     if !min.0.is_finite() || !min.1.is_finite() {
         return (2.0 * pad, 2.0 * pad);
@@ -274,6 +262,9 @@ fn normalize(
             *point = (point.0 + dx, point.1 + dy);
         }
         edge.label_at = (edge.label_at.0 + dx, edge.label_at.1 + dy);
+        if let Some(rect) = edge.label_rect {
+            edge.label_rect = Some(rect.translate(dx, dy));
+        }
     }
     (max.0 - min.0 + 2.0 * pad, max.1 - min.1 + 2.0 * pad)
 }

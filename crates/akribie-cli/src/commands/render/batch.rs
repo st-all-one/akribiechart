@@ -187,7 +187,7 @@ fn run(
         Format::Scene => scene_json(&placed, &report.chart),
         Format::Excalidraw => excalidraw(&report.chart, &placed),
         Format::Svg | Format::Raster(_) => {
-            let scene = paint::paint(&report.chart, &placed, font);
+            let scene = paint::paint(&report.chart, &placed);
             svg(&scene, report.chart.theme)
         }
     };

@@ -56,7 +56,7 @@ pub fn encode(svg: &str, format: RasterFormat, scale: f32) -> Result<Vec<u8>> {
     let mut options = usvg::Options::default();
     options.fontdb_mut().load_font_data(FONT_BYTES.to_vec());
     options.fontdb_mut().load_font_data(SANS_BYTES.to_vec());
-    options.font_family = "Excalifont".to_string();
+    options.font_family = "Liberation Sans".to_string();
     let tree = usvg::Tree::from_str(svg, &options)
         .map_err(|error| Error::internal(format!("SVG gerado é inválido: {error}")))?;
     let size = tree.size();
@@ -97,7 +97,7 @@ pub fn encode(svg: &str, format: RasterFormat, scale: f32) -> Result<Vec<u8>> {
 /// Canais RGB a partir do pixmap RGBA (o canvas é opaco; o alfa é sempre 255).
 fn rgb(pixmap: &tiny_skia::Pixmap) -> Vec<u8> {
     let data = pixmap.data();
-    let mut rgb = Vec::with_capacity(data.len() / 4 * 3);
+    let mut rgb = Vec::with_capacity(data.len().checked_div(4).unwrap_or(0).saturating_mul(3));
     let (pixels, _) = data.as_chunks::<4>();
     for [red, green, blue, _] in pixels {
         rgb.extend_from_slice(&[*red, *green, *blue]);

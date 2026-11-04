@@ -18,7 +18,7 @@ fn build(source: &str) -> (Chart, Placed, Scene, Font) {
         report.diagnostics
     );
     let placed = layout(&report.chart, &font);
-    let scene = paint(&report.chart, &placed, &font);
+    let scene = paint(&report.chart, &placed);
     (report.chart, placed, scene, font)
 }
 
@@ -120,7 +120,9 @@ fn clean_finish_uses_a_single_pass() {
 
 #[test]
 fn hand_finish_uses_two_passes() {
-    let (_, _, scene, _) = build("chart v1 \"x\"\nnode a \"A\"\nnode b \"B\"\nedge a -> b \"x\"\n");
+    let (_, _, scene, _) = build(
+        "chart v1 \"x\" sketch=on font=hand\nnode a \"A\"\nnode b \"B\"\nedge a -> b \"x\"\n",
+    );
     let node = scene.nodes.first().expect("nó");
     let stroke = node.stroke.as_ref().expect("contorno");
     assert_eq!(stroke.d.matches('M').count(), 2, "{}", stroke.d);

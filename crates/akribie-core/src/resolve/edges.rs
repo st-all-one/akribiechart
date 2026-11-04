@@ -37,7 +37,7 @@ impl State {
                 ordinal: *ordinal,
                 span: stmt.span,
             };
-            *ordinal += 1;
+            *ordinal = ordinal.saturating_add(1);
             self.chart.edges.push(edge);
         }
     }

@@ -21,7 +21,7 @@
   tocada quando carrega `<!-- akribie:skill:version: 1 -->` — um arquivo de terceiro no mesmo
   caminho é **preservado** e reportado como tal.
 - **Configuração gerada usa valores do léxico**, não strings TOML: `layout = flow`,
-  `fontsize = 20`, e apenas `lang = "en"` entre aspas (texto). O arquivo é um subconjunto do TOML
+  `fontsize = 20`, e apenas `lang = "pt-BR"` entre aspas (texto). O arquivo é um subconjunto do TOML
   validado pelo **mesmo** léxico do `.akrc`; a primeira versão escrevia `layout = "flow"` e o
   próprio `check` recusava — corrigido e coberto por teste.
 - **Saída do `init` é relatório, não silêncio.** Uma linha por arquivo (`novo`, `atualizado`,

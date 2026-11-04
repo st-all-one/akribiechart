@@ -16,6 +16,8 @@
 
 #![forbid(unsafe_code)]
 #![warn(missing_docs)]
+// Aritmética sem estouro e fatiamento seguro valem em produção; em teste, ADR-0006 §4.
+#![cfg_attr(not(test), deny(clippy::arithmetic_side_effects, clippy::string_slice))]
 
 pub mod a11y;
 pub mod config;

@@ -4,7 +4,7 @@ const ALPHABET: &[u8; 64] = b"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwx
 
 /// Codifica `bytes` em base64 padrão, com `=` de padding.
 pub(crate) fn encode(bytes: &[u8]) -> String {
-    let mut out = String::with_capacity(bytes.len().div_ceil(3) * 4);
+    let mut out = String::with_capacity(bytes.len().div_ceil(3).saturating_mul(4));
     for chunk in bytes.chunks(3) {
         let a = chunk.first().copied().map_or(0, u32::from);
         let b = chunk.get(1).copied().map_or(0, u32::from);

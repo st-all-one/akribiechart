@@ -1,0 +1,20 @@
+chart v1 "Pipeline CMS e resolução de permissão" direction=tb doc="README.md#pipeline-cms-rbac" font=sans lang=pt-BR layout=flow sketch=off
+
+node router "Router" fill=blue
+node flag "module.active" fill=amber
+node authn "v2.authenticate" fill=blue
+node perm "v2.permission" fill=blue
+node ps "PermissionService" fill=violet
+node ctl "Controller" fill=green
+node deny "403" fill=red
+node login "redirect login" fill=amber
+
+edge router -> flag "provider"
+edge flag -> authn "cms.php"
+edge authn -> perm "role"
+edge authn -> login "sem role" style=dashed
+edge perm -> ps "active_pattern"
+edge ps -> ctl "write/read"
+edge ps -> deny "none" style=dashed
+
+note "O provider aplica module.active; v2.authenticate e v2.permission vêm do Routes/cms.php do módulo" near=flag

@@ -7,8 +7,8 @@
 fn luminance(hex: &str) -> Option<f32> {
     let mut channels = [0.0_f32; 3];
     for (index, channel) in channels.iter_mut().enumerate() {
-        let start = 1 + index * 2;
-        let pair = hex.get(start..start + 2)?;
+        let start = index.saturating_mul(2).saturating_add(1);
+        let pair = hex.get(start..start.saturating_add(2))?;
         let value = u8::from_str_radix(pair, 16).ok()?;
         let normalized = f32::from(value) / 255.0;
         *channel = if normalized <= 0.040_45 {

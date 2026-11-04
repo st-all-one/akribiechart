@@ -16,7 +16,7 @@ const NODE_SEP: f64 = 48.0;
 /// Folga entre camadas: precisa caber o rótulo de aresta (texto de 20 px).
 const RANK_SEP: f64 = 96.0;
 
-pub(super) fn run(chart: &Chart, sizes: &[(f32, f32)]) -> Vec<Rect> {
+pub(super) fn run(chart: &Chart, sizes: &[(f32, f32)], labels: &[(f32, f32)]) -> Vec<Rect> {
     let mut graph: Graph<NodeLabel, EdgeLabel, GraphLabel> = Graph::new(GraphOptions {
         multigraph: true,
         ..GraphOptions::default()
@@ -38,11 +38,18 @@ pub(super) fn run(chart: &Chart, sizes: &[(f32, f32)]) -> Vec<Rect> {
         );
     }
     for (index, edge) in chart.edges.iter().enumerate() {
+        // A caixa do rótulo entra como nó dummy no dagre, que então separa os ranks na medida
+        // do texto: sem isso o rótulo nasce em cima do nó da camada seguinte.
+        let (width, height) = labels.get(index).copied().unwrap_or((0.0, 0.0));
         graph.set_edge_named(
             edge.from.as_str(),
             edge.to.as_str(),
             Some(format!("e{index}")),
-            Some(EdgeLabel::default()),
+            Some(EdgeLabel {
+                width: f64::from(width),
+                height: f64::from(height),
+                ..EdgeLabel::default()
+            }),
         );
     }
     if layout_controlled(&mut graph, &mut NoopWorkControl).is_err() {
